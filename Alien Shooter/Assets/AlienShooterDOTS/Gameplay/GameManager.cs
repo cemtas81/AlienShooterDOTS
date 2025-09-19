@@ -131,7 +131,7 @@ namespace AlienShooterDOTS.Gameplay
             }
 
             // Update spawn points
-            UpdateSpawnPoints(deltaTime);
+            UpdateSpawnPoints(ref state, deltaTime);
         }
 
         private void ProcessPlayingState(ref SystemState state, ref GameState gameState, float deltaTime, float currentTime)
@@ -310,7 +310,7 @@ namespace AlienShooterDOTS.Gameplay
             return waveNumber * 100;
         }
 
-        private void UpdateSpawnPoints(float deltaTime)
+        private void UpdateSpawnPoints(ref SystemState state, float deltaTime)
         {
             foreach (var spawnPoint in SystemAPI.Query<RefRW<EnemySpawnPoint>>())
             {

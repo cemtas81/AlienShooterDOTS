@@ -62,7 +62,7 @@ namespace AlienShooterDOTS.Integration.InputSystem
         private void FindPlayerEntity()
         {
             // Find the player entity in the world
-            var playerQuery = _entityManager.CreateEntityQuery(typeof(PlayerTag), typeof(PlayerInput));
+            var playerQuery = _entityManager.CreateEntityQuery(typeof(PlayerTag), typeof(PlayerInputData));
             
             if (playerQuery.CalculateEntityCount() > 0)
             {
@@ -144,9 +144,9 @@ namespace AlienShooterDOTS.Integration.InputSystem
             }
 
             // Update player input component
-            if (_entityManager.HasComponent<PlayerInput>(_playerEntity))
+            if (_entityManager.HasComponent<PlayerInputData>(_playerEntity))
             {
-                var playerInput = _entityManager.GetComponentData<PlayerInput>(_playerEntity);
+                var playerInput = _entityManager.GetComponentData<PlayerInputData>(_playerEntity);
                 
                 playerInput.MovementInput = new float2(_movementInput.x, _movementInput.y);
                 playerInput.FirePressed = _firePressed;
@@ -242,7 +242,7 @@ namespace AlienShooterDOTS.Integration.InputSystem
 
         private void FindPlayerEntity()
         {
-            var playerQuery = _entityManager.CreateEntityQuery(typeof(PlayerTag), typeof(PlayerInput));
+            var playerQuery = _entityManager.CreateEntityQuery(typeof(PlayerTag), typeof(PlayerInputData));
             
             if (playerQuery.CalculateEntityCount() > 0)
             {
@@ -256,7 +256,7 @@ namespace AlienShooterDOTS.Integration.InputSystem
 
         private void UpdatePlayerInput()
         {
-            if (!_entityManager.HasComponent<PlayerInput>(_playerEntity))
+            if (!_entityManager.HasComponent<PlayerInputData>(_playerEntity))
                 return;
 
             // Read legacy input
@@ -275,7 +275,7 @@ namespace AlienShooterDOTS.Integration.InputSystem
             bool reloadPressed = Input.GetKeyDown(ReloadKey);
 
             // Update player input component
-            var playerInput = _entityManager.GetComponentData<PlayerInput>(_playerEntity);
+            var playerInput = _entityManager.GetComponentData<PlayerInputData>(_playerEntity);
             
             playerInput.MovementInput = new float2(movement.x, movement.y);
             playerInput.FirePressed = firePressed;
@@ -318,7 +318,7 @@ namespace AlienShooterDOTS.Integration.InputSystem
             if (TargetEntity == Entity.Null || !_entityManager.Exists(TargetEntity))
                 return;
 
-            if (!_entityManager.HasComponent<PlayerInput>(TargetEntity))
+            if (!_entityManager.HasComponent<PlayerInputData>(TargetEntity))
                 return;
 
             // Generate AI input based on some logic
@@ -328,12 +328,12 @@ namespace AlienShooterDOTS.Integration.InputSystem
             _entityManager.SetComponentData(TargetEntity, aiInput);
         }
 
-        private PlayerInput GenerateAIInput()
+        private PlayerInputData GenerateAIInput()
         {
             // Simple AI input generation
             // In a real implementation, this would be much more sophisticated
             
-            return new PlayerInput
+            return new PlayerInputData
             {
                 MovementInput = new float2(
                     Mathf.Sin(Time.time) * 0.5f,
