@@ -1,17 +1,14 @@
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
-using Unity.Scenes;
-using Unity.Collections;
+using EntitiesHash128 = Unity.Entities.Hash128; // Çakýþma çözümü
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
 namespace AlienShooterDOTS.Bootstrap
 {
-    /// <summary>
-    /// Authoring component for game settings configuration
-    /// </summary>
     public class GameSettingsAuthoring : MonoBehaviour
     {
         [Header("Player Configuration")]
@@ -28,47 +25,32 @@ namespace AlienShooterDOTS.Bootstrap
         public float3 SpawnAreaCenter = float3.zero;
         public float SpawnAreaRadius = 10f;
 
-        [Header("Scene Configuration")]
+#if UNITY_EDITOR
+        [Header("Scene Configuration (Editor-only)")]
         public SceneAsset LevelScene;
+#endif
 
         class GameSettingsBaker : Baker<GameSettingsAuthoring>
         {
             public override void Bake(GameSettingsAuthoring authoring)
             {
-                Entity entity = GetEntity(TransformUsageFlags.None);
+                var entity = GetEntity(TransformUsageFlags.None);
 
-                // Convert prefabs to entities
-                Entity playerPrefab = Entity.Null;
-                Entity enemyPrefab = Entity.Null;
+                var playerPrefab = authoring.PlayerPrefab ? GetEntity(authoring.PlayerPrefab, TransformUsageFlags.Dynamic) : Entity.Null;
+                var enemyPrefab = authoring.EnemyPrefab ? GetEntity(authoring.EnemyPrefab, TransformUsageFlags.Dynamic) : Entity.Null;
 
-                if (authoring.PlayerPrefab != null)
-                {
-                    playerPrefab = GetEntity(authoring.PlayerPrefab, TransformUsageFlags.Dynamic);
-                }
-
-                if (authoring.EnemyPrefab != null)
-                {
-                    enemyPrefab = GetEntity(authoring.EnemyPrefab, TransformUsageFlags.Dynamic);
-                }
-
-                // Convert SceneAsset to Hash128 in editor
-                Hash128 levelSceneGUID = default;
+                // Scene GUID (Editor) — string'ten direkt Entities.Hash128 kur
+                EntitiesHash128 levelSceneGUID = default;
 #if UNITY_EDITOR
                 if (authoring.LevelScene != null)
                 {
                     string scenePath = AssetDatabase.GetAssetPath(authoring.LevelScene);
-                    string sceneGUID = AssetDatabase.AssetPathToGUID(scenePath);
-                    if (!string.IsNullOrEmpty(sceneGUID))
-                    {
-                        if (Hash128.TryParse(sceneGUID, out levelSceneGUID))
-                        {
-                            // Successfully parsed GUID
-                        }
-                    }
+                    string guidStr   = AssetDatabase.AssetPathToGUID(scenePath);
+                    if (!string.IsNullOrEmpty(guidStr))
+                        levelSceneGUID = new EntitiesHash128(guidStr); // TryParse/SceneSystem gerekmez
                 }
 #endif
 
-                // Add the GameSettings component
                 AddComponent(entity, new GameSettings
                 {
                     PlayerPrefab = playerPrefab,
