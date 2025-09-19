@@ -13,8 +13,6 @@ namespace AlienShooterDOTS.Core.Systems
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     public partial struct WeaponSystem : ISystem
     {
-        private EntityCommandBuffer.ParallelWriter _ecbWriter;
-
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
@@ -31,12 +29,52 @@ namespace AlienShooterDOTS.Core.Systems
             var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
             // Process weapon firing and reloading
-            new WeaponUpdateJob
+            foreach (var (firing, stats, ammo, owner, transform, entity) in 
+                SystemAPI.Query<RefRW<WeaponFiring>, RefRW<WeaponStats>, RefRW<WeaponAmmo>, RefRO<WeaponOwner>, RefRO<LocalTransform>>().WithEntityAccess())
             {
-                DeltaTime = deltaTime,
-                CurrentTime = currentTime,
-                ECB = ecb.AsParallelWriter()
-            }.ScheduleParallel();
+                // Update timers
+                if (firing.ValueRW.FireCooldownTimer > 0)
+                {
+                    firing.ValueRW.FireCooldownTimer -= deltaTime;
+                    firing.ValueRW.CanFire = firing.ValueRW.FireCooldownTimer <= 0;
+                }
+
+                if (firing.ValueRW.IsReloading)
+                {
+                    firing.ValueRW.ReloadTimer -= deltaTime;
+                    if (firing.ValueRW.ReloadTimer <= 0)
+                    {
+                        CompleteReload(ref firing.ValueRW, ref ammo.ValueRW, in stats.ValueRO);
+                    }
+                    continue; // Can't fire while reloading
+                }
+
+                // Get input from weapon owner (could be player or AI)
+                PlayerInputData playerInput = default;
+                bool hasInput = false;
+                if (SystemAPI.HasComponent<PlayerInputData>(owner.ValueRO.OwnerEntity))
+                {
+                    playerInput = SystemAPI.GetComponent<PlayerInputData>(owner.ValueRO.OwnerEntity);
+                    hasInput = true;
+                }
+
+                if (hasInput)
+                {
+                    ProcessPlayerWeaponInput(ref firing.ValueRW, ref ammo.ValueRW, in playerInput, in stats.ValueRO);
+                }
+
+                // Handle firing
+                if (firing.ValueRO.IsFiring && firing.ValueRO.CanFire && ammo.ValueRO.CurrentClipAmmo > 0)
+                {
+                    FireWeapon(ecb, entity, ref firing.ValueRW, ref stats.ValueRW, ref ammo.ValueRW, in owner.ValueRO, in transform.ValueRO, currentTime);
+                }
+
+                // Auto-reload when clip is empty
+                if (ammo.ValueRO.CurrentClipAmmo == 0 && !firing.ValueRO.IsReloading && ammo.ValueRO.ReserveAmmo > 0)
+                {
+                    StartReload(ref firing.ValueRW, in stats.ValueRO);
+                }
+            }
 
             // Process projectile movement and lifetime
             new ProjectileUpdateJob
@@ -45,192 +83,138 @@ namespace AlienShooterDOTS.Core.Systems
             }.ScheduleParallel();
         }
 
-        // TODO: Restructure to avoid SystemAPI calls in job for Burst compatibility
-        partial struct WeaponUpdateJob : IJobEntity
+        private void ProcessPlayerWeaponInput(ref WeaponFiring firing, ref WeaponAmmo ammo, in PlayerInputData input, in WeaponStats stats)
         {
-            public float DeltaTime;
-            public float CurrentTime;
-            public EntityCommandBuffer.ParallelWriter ECB;
-
-            public void Execute(
-                [ChunkIndexInQuery] int chunkIndex,
-                Entity entity,
-                ref WeaponFiring firing,
-                ref WeaponStats stats,
-                ref WeaponAmmo ammo,
-                in WeaponOwner owner,
-                in LocalTransform transform)
+            // Handle fire input
+            if (stats.IsAutomatic)
             {
-                // Update timers
-                if (firing.FireCooldownTimer > 0)
-                {
-                    firing.FireCooldownTimer -= DeltaTime;
-                    firing.CanFire = firing.FireCooldownTimer <= 0;
-                }
-
-                if (firing.IsReloading)
-                {
-                    firing.ReloadTimer -= DeltaTime;
-                    if (firing.ReloadTimer <= 0)
-                    {
-                        CompleteReload(ref firing, ref ammo, in stats);
-                    }
-                    return; // Can't fire while reloading
-                }
-
-                // Get input from weapon owner (could be player or AI)
-                if (SystemAPI.HasComponent<PlayerInputData>(owner.OwnerEntity))
-                {
-                    var playerInput = SystemAPI.GetComponent<PlayerInputData>(owner.OwnerEntity);
-                    ProcessPlayerWeaponInput(ref firing, ref ammo, in playerInput, in stats);
-                }
-
-                // Handle firing
-                if (firing.IsFiring && firing.CanFire && ammo.CurrentClipAmmo > 0)
-                {
-                    FireWeapon(chunkIndex, entity, ref firing, ref stats, ref ammo, in owner, in transform);
-                }
-
-                // Auto-reload when clip is empty
-                if (ammo.CurrentClipAmmo == 0 && !firing.IsReloading && ammo.ReserveAmmo > 0)
-                {
-                    StartReload(ref firing, ref stats);
-                }
+                firing.IsFiring = input.FirePressed;
             }
-
-            private void ProcessPlayerWeaponInput(ref WeaponFiring firing, ref WeaponAmmo ammo, in PlayerInputData input, in WeaponStats stats)
+            else
             {
-                // Handle fire input
-                if (stats.IsAutomatic)
+                // Semi-automatic: fire only on press, not hold
+                if (input.FirePressed && !firing.TriggerHeld)
                 {
-                    firing.IsFiring = input.FirePressed;
+                    firing.IsFiring = true;
+                    firing.TriggerHeld = true;
+                }
+                else if (!input.FirePressed)
+                {
+                    firing.IsFiring = false;
+                    firing.TriggerHeld = false;
                 }
                 else
-                {
-                    // Semi-automatic: fire only on press, not hold
-                    if (input.FirePressed && !firing.TriggerHeld)
-                    {
-                        firing.IsFiring = true;
-                        firing.TriggerHeld = true;
-                    }
-                    else if (!input.FirePressed)
-                    {
-                        firing.IsFiring = false;
-                        firing.TriggerHeld = false;
-                    }
-                    else
-                    {
-                        firing.IsFiring = false;
-                    }
-                }
-
-                // Handle reload input
-                if (input.ReloadPressed && !firing.IsReloading && ammo.CurrentClipAmmo < stats.MaxAmmo && ammo.ReserveAmmo > 0)
-                {
-                    StartReload(ref firing, ref stats);
-                }
-            }
-
-            private void FireWeapon(int chunkIndex, Entity weaponEntity, ref WeaponFiring firing, ref WeaponStats stats, ref WeaponAmmo ammo, in WeaponOwner owner, in LocalTransform transform)
-            {
-                // Set cooldown
-                firing.FireCooldownTimer = 1.0f / stats.FireRate;
-                firing.CanFire = false;
-                firing.LastFireTime = CurrentTime;
-
-                // Consume ammo
-                ammo.CurrentClipAmmo--;
-
-                // Calculate fire direction and position
-                float3 firePosition = transform.Position + owner.FirePoint;
-                float3 fireDirection = math.forward(transform.Rotation);
-
-                // Spawn projectiles
-                for (int i = 0; i < stats.ProjectilesPerShot; i++)
-                {
-                    SpawnProjectile(chunkIndex, weaponEntity, firePosition, fireDirection, in stats, in owner);
-                }
-
-                // Reset firing state for semi-automatic weapons
-                if (!stats.IsAutomatic)
                 {
                     firing.IsFiring = false;
                 }
             }
 
-            private void SpawnProjectile(int chunkIndex, Entity weaponEntity, float3 position, float3 direction, in WeaponStats stats, in WeaponOwner owner)
+            // Handle reload input
+            if (input.ReloadPressed && !firing.IsReloading && ammo.CurrentClipAmmo < stats.MaxAmmo && ammo.ReserveAmmo > 0)
             {
-                // Apply accuracy (spread)
-                float3 finalDirection = ApplyAccuracy(direction, stats.Accuracy);
+                StartReload(ref firing, in stats);
+            }
+        }
 
-                // Create projectile entity
-                Entity projectileEntity = ECB.CreateEntity(chunkIndex);
+        private void FireWeapon(EntityCommandBuffer ecb, Entity weaponEntity, ref WeaponFiring firing, ref WeaponStats stats, ref WeaponAmmo ammo, in WeaponOwner owner, in LocalTransform transform, float currentTime)
+        {
+            // Set cooldown
+            firing.FireCooldownTimer = 1.0f / stats.FireRate;
+            firing.CanFire = false;
+            firing.LastFireTime = currentTime;
 
-                // Add projectile components
-                ECB.AddComponent(chunkIndex, projectileEntity, new Projectile
-                {
-                    Damage = stats.Damage,
-                    Speed = stats.ProjectileSpeed,
-                    Lifetime = stats.Range / stats.ProjectileSpeed, // Calculate lifetime from range
-                    Direction = finalDirection,
-                    Shooter = owner.OwnerEntity,
-                    Type = GetProjectileType(stats),
-                    HasHitTarget = false
-                });
+            // Consume ammo
+            ammo.CurrentClipAmmo--;
 
-                ECB.AddComponent(chunkIndex, projectileEntity, LocalTransform.FromPosition(position));
+            // Calculate fire direction and position
+            float3 firePosition = transform.Position + owner.FirePoint;
+            float3 fireDirection = math.forward(transform.Rotation);
+
+            // Spawn projectiles
+            for (int i = 0; i < stats.ProjectilesPerShot; i++)
+            {
+                SpawnProjectile(ecb, weaponEntity, firePosition, fireDirection, in stats, in owner);
             }
 
-            private float3 ApplyAccuracy(float3 direction, float accuracy)
+            // Reset firing state for semi-automatic weapons
+            if (!stats.IsAutomatic)
             {
-                if (accuracy >= 1.0f)
-                    return direction;
-
-                // Calculate spread based on accuracy (lower accuracy = more spread)
-                float spread = (1.0f - accuracy) * 0.2f; // Max spread of 0.2 radians
-
-                // Add random offset to direction
-                float3 randomOffset = new float3(
-                    UnityEngine.Random.Range(-spread, spread),
-                    UnityEngine.Random.Range(-spread, spread),
-                    0
-                );
-
-                return math.normalize(direction + randomOffset);
-            }
-
-            private ProjectileType GetProjectileType(in WeaponStats stats)
-            {
-                // Simple mapping based on weapon characteristics
-                if (stats.ProjectileSpeed > 100f)
-                    return ProjectileType.Laser;
-                else if (stats.Damage > 50f)
-                    return ProjectileType.Rocket;
-                else
-                    return ProjectileType.Bullet;
-            }
-
-            private void StartReload(ref WeaponFiring firing, ref WeaponStats stats)
-            {
-                firing.IsReloading = true;
-                firing.ReloadTimer = stats.ReloadTime;
                 firing.IsFiring = false;
             }
+        }
 
-            private void CompleteReload(ref WeaponFiring firing, ref WeaponAmmo ammo, in WeaponStats stats)
+        private void SpawnProjectile(EntityCommandBuffer ecb, Entity weaponEntity, float3 position, float3 direction, in WeaponStats stats, in WeaponOwner owner)
+        {
+            // Apply accuracy (spread)
+            float3 finalDirection = ApplyAccuracy(direction, stats.Accuracy);
+
+            // Create projectile entity
+            Entity projectileEntity = ecb.CreateEntity();
+
+            // Add projectile components
+            ecb.AddComponent(projectileEntity, new Projectile
             {
-                firing.IsReloading = false;
-                firing.ReloadTimer = 0f;
+                Damage = stats.Damage,
+                Speed = stats.ProjectileSpeed,
+                Lifetime = stats.Range / stats.ProjectileSpeed, // Calculate lifetime from range
+                Direction = finalDirection,
+                Shooter = owner.OwnerEntity,
+                Type = GetProjectileType(stats),
+                HasHitTarget = false
+            });
 
-                // Calculate how much ammo to reload
-                int ammoNeeded = stats.MaxAmmo - ammo.CurrentClipAmmo;
-                int ammoToReload = math.min(ammoNeeded, ammo.ReserveAmmo);
+            ecb.AddComponent(projectileEntity, LocalTransform.FromPosition(position));
+        }
 
-                ammo.CurrentClipAmmo += ammoToReload;
-                if (!ammo.InfiniteAmmo)
-                {
-                    ammo.ReserveAmmo -= ammoToReload;
-                }
+        private float3 ApplyAccuracy(float3 direction, float accuracy)
+        {
+            if (accuracy >= 1.0f)
+                return direction;
+
+            // Calculate spread based on accuracy (lower accuracy = more spread)
+            float spread = (1.0f - accuracy) * 0.2f; // Max spread of 0.2 radians
+
+            // Add random offset to direction
+            float3 randomOffset = new float3(
+                UnityEngine.Random.Range(-spread, spread),
+                UnityEngine.Random.Range(-spread, spread),
+                0
+            );
+
+            return math.normalize(direction + randomOffset);
+        }
+
+        private ProjectileType GetProjectileType(in WeaponStats stats)
+        {
+            // Simple mapping based on weapon characteristics
+            if (stats.ProjectileSpeed > 100f)
+                return ProjectileType.Laser;
+            else if (stats.Damage > 50f)
+                return ProjectileType.Rocket;
+            else
+                return ProjectileType.Bullet;
+        }
+
+        private void StartReload(ref WeaponFiring firing, in WeaponStats stats)
+        {
+            firing.IsReloading = true;
+            firing.ReloadTimer = stats.ReloadTime;
+            firing.IsFiring = false;
+        }
+
+        private void CompleteReload(ref WeaponFiring firing, ref WeaponAmmo ammo, in WeaponStats stats)
+        {
+            firing.IsReloading = false;
+            firing.ReloadTimer = 0f;
+
+            // Calculate how much ammo to reload
+            int ammoNeeded = stats.MaxAmmo - ammo.CurrentClipAmmo;
+            int ammoToReload = math.min(ammoNeeded, ammo.ReserveAmmo);
+
+            ammo.CurrentClipAmmo += ammoToReload;
+            if (!ammo.InfiniteAmmo)
+            {
+                ammo.ReserveAmmo -= ammoToReload;
             }
         }
 

@@ -4,6 +4,9 @@ using Unity.Mathematics;
 using AlienShooterDOTS.Core.Components;
 using AlienShooterDOTS.Gameplay;
 using AlienShooterDOTS.Authoring;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace AlienShooterDOTS.Examples
 {
@@ -191,38 +194,50 @@ namespace AlienShooterDOTS.Examples
         // Public methods for runtime control
         public void StartGame()
         {
-            if (_entityManager.HasSingleton<GameState>())
+            var gameStateQuery = _entityManager.CreateEntityQuery(typeof(GameState));
+            if (!gameStateQuery.IsEmpty)
             {
-                var gameState = _entityManager.GetSingletonRW<GameState>();
-                gameState.ValueRW.CurrentState = GameStateType.Playing;
-                gameState.ValueRW.IsGameActive = true;
+                var gameStateEntity = gameStateQuery.GetSingletonEntity();
+                var gameState = _entityManager.GetComponentData<GameState>(gameStateEntity);
+                gameState.CurrentState = GameStateType.Playing;
+                gameState.IsGameActive = true;
+                _entityManager.SetComponentData(gameStateEntity, gameState);
                 Debug.Log("Game started!");
             }
+            gameStateQuery.Dispose();
         }
 
         public void PauseGame()
         {
-            if (_entityManager.HasSingleton<GameState>())
+            var gameStateQuery = _entityManager.CreateEntityQuery(typeof(GameState));
+            if (!gameStateQuery.IsEmpty)
             {
-                var gameState = _entityManager.GetSingletonRW<GameState>();
-                gameState.ValueRW.CurrentState = GameStateType.Paused;
+                var gameStateEntity = gameStateQuery.GetSingletonEntity();
+                var gameState = _entityManager.GetComponentData<GameState>(gameStateEntity);
+                gameState.CurrentState = GameStateType.Paused;
+                _entityManager.SetComponentData(gameStateEntity, gameState);
                 Debug.Log("Game paused!");
             }
+            gameStateQuery.Dispose();
         }
 
         public void RestartGame()
         {
             // Reset game state
-            if (_entityManager.HasSingleton<GameState>())
+            var gameStateQuery = _entityManager.CreateEntityQuery(typeof(GameState));
+            if (!gameStateQuery.IsEmpty)
             {
-                var gameState = _entityManager.GetSingletonRW<GameState>();
-                gameState.ValueRW.CurrentState = GameStateType.Playing;
-                gameState.ValueRW.CurrentWave = 1;
-                gameState.ValueRW.Score = 0;
-                gameState.ValueRW.EnemiesKilled = 0;
-                gameState.ValueRW.IsGameActive = true;
+                var gameStateEntity = gameStateQuery.GetSingletonEntity();
+                var gameState = _entityManager.GetComponentData<GameState>(gameStateEntity);
+                gameState.CurrentState = GameStateType.Playing;
+                gameState.CurrentWave = 1;
+                gameState.Score = 0;
+                gameState.EnemiesKilled = 0;
+                gameState.IsGameActive = true;
+                _entityManager.SetComponentData(gameStateEntity, gameState);
                 Debug.Log("Game restarted!");
             }
+            gameStateQuery.Dispose();
         }
 
         // Debug information display
@@ -231,17 +246,23 @@ namespace AlienShooterDOTS.Examples
             if (!Application.isPlaying) return;
 
             GUILayout.BeginArea(new Rect(Screen.width - 250, 10, 240, 200));
+#if UNITY_EDITOR
             GUILayout.Label("Game Debug Info", EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector).label);
+#else
+            GUILayout.Label("Game Debug Info");
+#endif
 
-            if (_entityManager.HasSingleton<GameState>())
+            var gameStateQuery = _entityManager.CreateEntityQuery(typeof(GameState));
+            if (!gameStateQuery.IsEmpty)
             {
-                var gameState = _entityManager.GetSingleton<GameState>();
+                var gameState = _entityManager.GetComponentData<GameState>(gameStateQuery.GetSingletonEntity());
                 GUILayout.Label($"State: {gameState.CurrentState}");
                 GUILayout.Label($"Wave: {gameState.CurrentWave}");
                 GUILayout.Label($"Score: {gameState.Score}");
                 GUILayout.Label($"Enemies Remaining: {gameState.EnemiesRemaining}");
                 GUILayout.Label($"Enemies Killed: {gameState.EnemiesKilled}");
             }
+            gameStateQuery.Dispose();
 
             GUILayout.Space(10);
 
