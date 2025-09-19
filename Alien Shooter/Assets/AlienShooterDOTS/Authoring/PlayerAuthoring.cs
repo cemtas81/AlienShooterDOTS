@@ -39,7 +39,7 @@ namespace AlienShooterDOTS.Authoring
                 AddComponent<PlayerTag>(entity);
 
                 // Add player input component
-                AddComponent(entity, new PlayerInput
+                AddComponent(entity, new PlayerInputData
                 {
                     MovementInput = float2.zero,
                     FirePressed = false,

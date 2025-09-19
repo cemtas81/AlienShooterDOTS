@@ -79,9 +79,9 @@ namespace AlienShooterDOTS.Core.Systems
                 }
 
                 // Get input from weapon owner (could be player or AI)
-                if (SystemAPI.HasComponent<PlayerInput>(owner.OwnerEntity))
+                if (SystemAPI.HasComponent<PlayerInputData>(owner.OwnerEntity))
                 {
-                    var playerInput = SystemAPI.GetComponent<PlayerInput>(owner.OwnerEntity);
+                    var playerInput = SystemAPI.GetComponent<PlayerInputData>(owner.OwnerEntity);
                     ProcessPlayerWeaponInput(ref firing, ref ammo, in playerInput, in stats);
                 }
 
@@ -98,7 +98,7 @@ namespace AlienShooterDOTS.Core.Systems
                 }
             }
 
-            private void ProcessPlayerWeaponInput(ref WeaponFiring firing, ref WeaponAmmo ammo, in PlayerInput input, in WeaponStats stats)
+            private void ProcessPlayerWeaponInput(ref WeaponFiring firing, ref WeaponAmmo ammo, in PlayerInputData input, in WeaponStats stats)
             {
                 // Handle fire input
                 if (stats.IsAutomatic)

@@ -11,7 +11,7 @@ namespace AlienShooterDOTS.Core.Components
     /// <summary>
     /// Player input data for movement and actions
     /// </summary>
-    public struct PlayerInput : IComponentData
+    public struct PlayerInputData : IComponentData
     {
         public float2 MovementInput;    // WASD/Arrow keys input
         public bool FirePressed;        // Fire button state
