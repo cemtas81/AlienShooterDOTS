@@ -233,9 +233,12 @@ namespace AlienShooterDOTS.Core.Systems
 
             private void SetNewPatrolTarget(ref EnemyAI enemyAI, in LocalTransform transform, in EnemyPatrol patrol)
             {
-                // Generate random point within patrol radius
-                float angle = UnityEngine.Random.Range(0f, 2f * math.PI);
-                float radius = UnityEngine.Random.Range(0f, patrol.PatrolRadius);
+                // Generate random point within patrol radius using a simple hash-based approach
+                uint seed = (uint)(transform.Position.x * 1000 + transform.Position.z * 1000 + CurrentTime * 1000);
+                var random = new Unity.Mathematics.Random(seed);
+                
+                float angle = random.NextFloat(0f, 2f * math.PI);
+                float radius = random.NextFloat(0f, patrol.PatrolRadius);
                 
                 float3 offset = new float3(
                     math.cos(angle) * radius,
