@@ -35,7 +35,7 @@ namespace AlienShooterDOTS.Integration
         public DamageType Type;
         public Entity DealerEntity;
         public bool IsOneShot; // Destroy after dealing damage once
-        public LayerMask TargetLayers;
+        public uint TargetLayers;
     }
 
     public enum DamageType : byte
@@ -55,7 +55,7 @@ namespace AlienShooterDOTS.Integration
         public float CurrentHealth;
         public bool IsInvulnerable;
         public float InvulnerabilityTimer;
-        public LayerMask DamageableLayers;
+        public uint DamageableLayers;
     }
 
     /// <summary>
@@ -65,7 +65,7 @@ namespace AlienShooterDOTS.Integration
     {
         public TriggerType Type;
         public float Radius;
-        public LayerMask TriggerLayers;
+        public uint TriggerLayers;
         public bool IsActive;
         public Entity OwnerEntity;
     }
@@ -91,7 +91,7 @@ namespace AlienShooterDOTS.Integration
         public float Duration;
         public float Timer;
         public bool IsActive;
-        public LayerMask AffectedLayers;
+        public uint AffectedLayers;
     }
 
     /// <summary>

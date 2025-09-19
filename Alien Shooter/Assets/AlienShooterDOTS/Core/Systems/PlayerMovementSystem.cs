@@ -74,7 +74,7 @@ namespace AlienShooterDOTS.Core.Systems
             public void Execute(
                 ref LocalTransform transform,
                 ref PlayerState playerState,
-                in PlayerInput input,
+                in PlayerInputData input,
                 in PlayerStats stats)
             {
                 // Skip movement if player is dead
