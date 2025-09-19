@@ -174,10 +174,14 @@ namespace AlienShooterDOTS.Core.Systems
             // Calculate spread based on accuracy (lower accuracy = more spread)
             float spread = (1.0f - accuracy) * 0.2f; // Max spread of 0.2 radians
 
+            // Use a simple hash-based random for Burst compatibility
+            uint seed = (uint)(direction.x * 1000 + direction.z * 1000 + UnityEngine.Time.time * 1000);
+            var random = new Unity.Mathematics.Random(seed);
+
             // Add random offset to direction
             float3 randomOffset = new float3(
-                UnityEngine.Random.Range(-spread, spread),
-                UnityEngine.Random.Range(-spread, spread),
+                random.NextFloat(-spread, spread),
+                random.NextFloat(-spread, spread),
                 0
             );
 
