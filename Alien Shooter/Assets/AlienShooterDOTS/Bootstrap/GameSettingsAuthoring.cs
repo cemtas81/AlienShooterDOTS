@@ -60,7 +60,10 @@ namespace AlienShooterDOTS.Bootstrap
                     string sceneGUID = AssetDatabase.AssetPathToGUID(scenePath);
                     if (!string.IsNullOrEmpty(sceneGUID))
                     {
-                        levelSceneGUID = new Hash128(sceneGUID);
+                        if (Hash128.TryParse(sceneGUID, out levelSceneGUID))
+                        {
+                            // Successfully parsed GUID
+                        }
                     }
                 }
 #endif

@@ -30,7 +30,7 @@ namespace AlienShooterDOTS.Bootstrap
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            float deltaTime = SystemAPI.Time.DeltaTime;
+            float deltaTime = state.WorldUnmanaged.Time.DeltaTime;
             int currentEnemyCount = _enemyQuery.CalculateEntityCount();
 
             // Get entity command buffer for spawning enemies

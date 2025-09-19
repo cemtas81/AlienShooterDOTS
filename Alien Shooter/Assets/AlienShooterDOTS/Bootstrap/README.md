@@ -19,7 +19,7 @@ This directory contains the bootstrap system for AlienShooterDOTS that handles i
 In the GameSettingsAuthoring component inspector, configure:
 
 - **Player Prefab**: Assign a prefab with `PlayerAuthoring` component
-- **Enemy Prefab**: Assign a prefab with `EnemyAuthoring` component  
+- **Enemy Prefab**: Assign a prefab with `EnemyAuthoring` component (must have EnemyTag)
 - **Spawn Interval**: Time between enemy spawn waves (default: 1.0s)
 - **Initial Enemy Count**: Enemies spawned immediately (default: 5)
 - **Max Alive Enemies**: Maximum concurrent enemies (default: 20)
@@ -28,7 +28,13 @@ In the GameSettingsAuthoring component inspector, configure:
 - **Spawn Area Radius**: Radius for random enemy placement (default: 10)
 - **Level Scene**: Optional scene to load on bootstrap (leave empty if not needed)
 
-### 3. Usage
+### 3. Testing Setup
+
+1. Add the `BootstrapTest` component to a GameObject in your Bootstrap scene for debugging
+2. Enable "Show Debug Info" to see bootstrap status in the game view
+3. Enable "Log Bootstrap Status" to see console messages
+
+### 4. Usage
 
 1. Set `Bootstrap.unity` as your main scene
 2. Player will spawn at the center of the spawn area
@@ -44,6 +50,7 @@ In the GameSettingsAuthoring component inspector, configure:
 - **EnemySpawnerSystem**: SimulationSystemGroup system for continuous enemy spawning
 - **EnemySpawnSettings**: IComponentData for spawner configuration
 - **BootstrapDone**: Tag component to prevent re-running bootstrap
+- **BootstrapTest**: Debug component for testing and monitoring
 
 ## Technical Details
 
@@ -52,3 +59,5 @@ In the GameSettingsAuthoring component inspector, configure:
 - SceneAsset references converted to Hash128 for runtime use
 - EntityCommandBuffer used for structural changes
 - Follows DOTS best practices with proper system groups and update ordering
+- Compatible with Unity 6.x
+- Requires prefabs with proper authoring components (PlayerAuthoring, EnemyAuthoring)
