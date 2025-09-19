@@ -45,7 +45,7 @@ namespace AlienShooterDOTS.Core.Systems
             }.ScheduleParallel();
         }
 
-        [BurstCompile]
+        // TODO: Restructure to avoid SystemAPI calls in job for Burst compatibility
         partial struct WeaponUpdateJob : IJobEntity
         {
             public float DeltaTime;
