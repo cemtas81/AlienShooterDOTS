@@ -148,7 +148,7 @@ namespace AlienShooterDOTS.Authoring
                     PatrolTarget = float3.zero,
                     TargetEntity = Entity.Null,
                     LastAttackTime = 0f,
-                    SpawnPosition = transform.position
+                    SpawnPosition = authoring.transform.position
                 });
 
                 // Add combat component
@@ -164,9 +164,9 @@ namespace AlienShooterDOTS.Authoring
                 // Add patrol component
                 AddComponent(entity, new EnemyPatrol
                 {
-                    PatrolCenter = transform.position,
+                    PatrolCenter = authoring.transform.position,
                     PatrolRadius = authoring.PatrolRadius,
-                    CurrentTarget = transform.position,
+                    CurrentTarget = authoring.transform.position,
                     PatrolSpeed = authoring.PatrolSpeed,
                     ReachedTarget = false
                 });
@@ -286,7 +286,7 @@ namespace AlienShooterDOTS.Authoring
 
                 AddComponent(entity, new AlienShooterDOTS.Gameplay.EnemySpawnPoint
                 {
-                    Position = transform.position,
+                    Position = authoring.transform.position,
                     IsActive = authoring.IsActive,
                     CooldownTimer = 0f
                 });

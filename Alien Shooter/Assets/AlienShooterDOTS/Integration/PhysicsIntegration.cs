@@ -338,7 +338,7 @@ namespace AlienShooterDOTS.Integration
                 Duration = 0.5f,
                 Timer = 0f,
                 IsActive = true,
-                AffectedLayers = ~0 // All layers by default
+                AffectedLayers = uint.MaxValue // All layers by default
             });
 
             entityManager.AddComponentData(explosionEntity, LocalTransform.FromPosition(position));
@@ -360,7 +360,7 @@ namespace AlienShooterDOTS.Integration
                 CurrentHealth = maxHealth,
                 IsInvulnerable = false,
                 InvulnerabilityTimer = 0f,
-                DamageableLayers = ~0 // All layers by default
+                DamageableLayers = uint.MaxValue // All layers by default
             });
         }
 
@@ -380,7 +380,7 @@ namespace AlienShooterDOTS.Integration
                 Type = damageType,
                 DealerEntity = entity,
                 IsOneShot = isOneShot,
-                TargetLayers = ~0 // All layers by default
+                TargetLayers = uint.MaxValue // All layers by default
             });
         }
 
@@ -400,7 +400,7 @@ namespace AlienShooterDOTS.Integration
             {
                 Type = triggerType,
                 Radius = radius,
-                TriggerLayers = ~0, // All layers by default
+                TriggerLayers = uint.MaxValue, // All layers by default
                 IsActive = true,
                 OwnerEntity = owner
             });
