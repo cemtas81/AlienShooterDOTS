@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d9a236bcca8d0b54ea277096ca3cb128
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 4300000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 246164
+  packageName: Gpu Animation Entities
+  packageVersion: 0.5.5
+  assetPath: Packages/com.sniveler-code.gpu-animation/Runtime/Demo/Meshes/model02_1_lod2.asset
+  uploadId: 579846

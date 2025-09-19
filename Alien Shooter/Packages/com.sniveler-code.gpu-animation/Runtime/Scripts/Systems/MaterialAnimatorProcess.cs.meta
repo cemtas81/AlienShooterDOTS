@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 7861abb9dc49381478a3f847fc01d897
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 246164
+  packageName: Gpu Animation Entities
+  packageVersion: 0.5.5
+  assetPath: Packages/com.sniveler-code.gpu-animation/Runtime/Scripts/Systems/MaterialAnimatorProcess.cs
+  uploadId: 579846

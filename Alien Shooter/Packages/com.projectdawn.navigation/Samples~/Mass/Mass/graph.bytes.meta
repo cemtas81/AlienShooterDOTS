@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: f9a352f7c3d4d8541b77366489b0bbe5
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 239233
+  packageName: Agents Navigation
+  packageVersion: 4.2.5
+  assetPath: Packages/com.projectdawn.navigation/Samples~/Mass/Mass/graph.bytes
+  uploadId: 786782

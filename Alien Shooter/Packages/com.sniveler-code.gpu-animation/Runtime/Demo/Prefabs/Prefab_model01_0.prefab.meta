@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 075d33399921aaf40af218f1a241cd78
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 246164
+  packageName: Gpu Animation Entities
+  packageVersion: 0.5.5
+  assetPath: Packages/com.sniveler-code.gpu-animation/Runtime/Demo/Prefabs/Prefab_model01_0.prefab
+  uploadId: 579846

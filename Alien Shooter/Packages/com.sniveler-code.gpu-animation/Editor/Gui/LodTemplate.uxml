@@ -1,0 +1,11 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <ui:VisualElement name="RootElement" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; align-items: center; width: 100%; height: 26px;">
+        <ui:Label tabindex="-1" text="Transition" display-tooltip-when-elided="true" style="-unity-text-align: middle-left; color: rgb(212, 197, 197);" />
+        <ui:SliderInt picking-mode="Ignore" value="42" high-value="100" show-input-field="true" name="Percent" inverted="true" style="width: 120px;" />
+        <ui:Label tabindex="-1" text="%" display-tooltip-when-elided="true" style="-unity-text-align: middle-left;" />
+        <uie:ObjectField type="UnityEngine.Mesh, UnityEngine.CoreModule" name="Mesh" style="flex-grow: 1; flex-shrink: 1; flex-direction: row-reverse;">
+            <ui:Label tabindex="-1" display-tooltip-when-elided="true" name="Message" style="position: absolute; -unity-text-align: middle-right; margin-right: 20px; color: rgb(255, 47, 47); height: 100%;" />
+        </uie:ObjectField>
+        <ui:Button text="remove" display-tooltip-when-elided="true" name="Remove" />
+    </ui:VisualElement>
+</ui:UXML>

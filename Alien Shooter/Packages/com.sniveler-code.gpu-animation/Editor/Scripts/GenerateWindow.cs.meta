@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 41a286a7668ca1b48b860b9b428680d9
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - m_ViewDataDictionary: {instanceID: 0}
+  - instanceShader: {fileID: -6465566751694194690, guid: d3c01408940c0eb419e331cd0420e56a,
+      type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 246164
+  packageName: Gpu Animation Entities
+  packageVersion: 0.5.5
+  assetPath: Packages/com.sniveler-code.gpu-animation/Editor/Scripts/GenerateWindow.cs
+  uploadId: 579846

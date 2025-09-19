@@ -1,0 +1,31 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <Style src="project://database/Packages/com.sniveler-code.gpu-animation/Editor/Gui/GenerateWindow.uss?fileID=7433441132597879392&amp;guid=389d5f8434d413240ba0f5ea94ed7679&amp;type=3#GenerateWindow" />
+    <ui:VisualElement name="RootElement" style="flex-grow: initial; background-color: rgba(0, 0, 0, 0); flex-direction: column; height: auto; align-items: stretch; justify-content: space-between; align-self: auto; width: 100%;">
+        <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row;">
+            <ui:VisualElement style="flex-grow: 0; background-color: rgba(0, 0, 0, 0); width: 16px; flex-shrink: 0; background-image: url(&apos;project://database/Packages/com.unity.timeline/Editor/StyleSheets/Images/Icons/d_TrackAvatarButtonEnabled@2x.png?fileID=2800000&amp;guid=fd12dbe3b63ae464f824b4a74c0e1766&amp;type=3#d_TrackAvatarButtonEnabled@2x&apos;); padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; margin-left: 2px; margin-right: 2px; margin-top: 2px; margin-bottom: 2px;" />
+            <ui:Button text="Remove" display-tooltip-when-elided="true" name="Remove" tooltip="Remove Prefab" />
+            <uie:ObjectField type="UnityEngine.GameObject, UnityEngine.CoreModule" allow-scene-objects="false" name="PrefabField" style="width: auto; visibility: visible; display: flex; overflow: visible; justify-content: flex-start; flex-shrink: 1; flex-grow: 1; flex-direction: row-reverse;">
+                <ui:Label tabindex="-1" display-tooltip-when-elided="false" enable-rich-text="false" name="ErrorMessage" style="-unity-text-align: middle-left; color: rgb(224, 58, 58); position: absolute; height: 100%; margin-right: 20px;" />
+            </uie:ObjectField>
+            <ui:Toggle name="Config" style="margin-top: 2px;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="PrefabParams" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); margin-left: 20px; display: none;">
+            <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; margin-right: 5px; align-self: auto;">
+                <ui:VisualElement style="flex-grow: 0; background-color: rgba(0, 0, 0, 0); flex-shrink: 0; width: 29px;" />
+                <ui:Label tabindex="-1" text="Animator Setup" display-tooltip-when-elided="true" enable-rich-text="false" style="-unity-text-align: middle-right; background-image: url(&apos;project://database/Packages/com.unity.timeline/Editor/StyleSheets/Images/Shared/TimelineSeqEnd.png?fileID=2800000&amp;guid=5dfe66e61e0d270468ae75349ff3a3eb&amp;type=3#TimelineSeqEnd&apos;); -unity-background-image-tint-color: rgb(190, 130, 130); -unity-background-scale-mode: scale-and-crop; -unity-font-style: bold; font-size: 12px; padding-left: 5px; margin-left: 2px; margin-right: 2px; margin-top: 2px; margin-bottom: 2px; flex-grow: 1; flex-shrink: 1;" />
+                <ui:VisualElement style="flex-grow: 0; background-color: rgba(0, 0, 0, 0); flex-shrink: 0; width: 16px; height: 16px; margin-top: 2px; background-image: url(&apos;project://database/Packages/com.unity.entities/Editor%20Default%20Resources/icons/dark/Components/Component.png?fileID=2800000&amp;guid=92cbfab6cd4976d498a133609b912265&amp;type=3#Component&apos;);" />
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; align-self: flex-end; justify-content: flex-start; align-items: stretch; display: flex; padding-left: 29px;">
+                <ui:Button text="from prefab" display-tooltip-when-elided="true" />
+                <uie:ObjectField type="UnityEditor.Animations.AnimatorController, UnityEditor.CoreModule" name="AnimatorField" allow-scene-objects="false" style="flex-grow: 1; margin-left: 0; flex-shrink: 1;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="AnimationsContainer" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); display: none; padding-left: 29px;" />
+            <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; margin-right: 5px;">
+                <ui:Button text="+" display-tooltip-when-elided="true" name="AddLod" />
+                <ui:Label tabindex="-1" text="Lods Setup" display-tooltip-when-elided="true" enable-rich-text="false" style="-unity-text-align: middle-right; background-image: url(&apos;project://database/Packages/com.unity.timeline/Editor/StyleSheets/Images/Shared/TimelineSeqEnd.png?fileID=2800000&amp;guid=5dfe66e61e0d270468ae75349ff3a3eb&amp;type=3#TimelineSeqEnd&apos;); -unity-background-image-tint-color: rgb(190, 130, 130); -unity-background-scale-mode: scale-and-crop; -unity-font-style: bold; font-size: 12px; padding-left: 5px; margin-left: 2px; margin-right: 2px; margin-top: 2px; margin-bottom: 2px; flex-grow: 1; flex-shrink: 1;" />
+                <ui:VisualElement style="flex-grow: 0; background-color: rgba(0, 0, 0, 0); flex-shrink: 0; width: 16px; height: 16px; margin-top: 2px; background-image: url(&apos;project://database/Packages/com.unity.entities/Editor%20Default%20Resources/icons/dark/Components/Component.png?fileID=2800000&amp;guid=92cbfab6cd4976d498a133609b912265&amp;type=3#Component&apos;);" />
+            </ui:VisualElement>
+            <ui:VisualElement name="LodsContent" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: column; padding-left: 40px; margin-top: 3px; display: flex;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
