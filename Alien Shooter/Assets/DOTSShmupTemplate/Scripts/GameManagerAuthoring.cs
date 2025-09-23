@@ -14,9 +14,3 @@ public class GameManagerBaker : Baker<GameManagerAuthoring>
         AddComponent<GameScore>(entity);
     }
 }
-
-public struct GameManager : IComponentData { }
-public struct GameScore : IComponentData
-{
-    public int Value;
-}

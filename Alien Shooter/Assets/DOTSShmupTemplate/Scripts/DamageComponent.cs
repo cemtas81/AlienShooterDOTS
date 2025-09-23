@@ -1,12 +1,8 @@
-// Authoring için:
+// Authoring iï¿½in:
 using Unity.Entities;
 using UnityEngine;
 
 
-public struct DamageComponent : IComponentData
-{
-    public int Value;
-}
 
 public class DamageAuthoring : MonoBehaviour
 {
