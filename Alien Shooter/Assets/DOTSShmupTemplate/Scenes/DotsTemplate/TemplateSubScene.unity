@@ -145,7 +145,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5531039219392529473, guid: dfba1b2d41e210f46ad68e6bfc055e00, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 5531039219392529473, guid: dfba1b2d41e210f46ad68e6bfc055e00, type: 3}
       propertyPath: m_LocalRotation.x
@@ -153,7 +153,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5531039219392529473, guid: dfba1b2d41e210f46ad68e6bfc055e00, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 5531039219392529473, guid: dfba1b2d41e210f46ad68e6bfc055e00, type: 3}
       propertyPath: m_LocalRotation.z
@@ -165,7 +165,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5531039219392529473, guid: dfba1b2d41e210f46ad68e6bfc055e00, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 5531039219392529473, guid: dfba1b2d41e210f46ad68e6bfc055e00, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -176,6 +176,51 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dfba1b2d41e210f46ad68e6bfc055e00, type: 3}
+--- !u!1 &853917378
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 853917380}
+  - component: {fileID: 853917379}
+  m_Layer: 0
+  m_Name: BulletPrefabReference
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &853917379
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 853917378}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8450974f6da27e540a421a791f2d1a1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BulletPrefabReferenceAuthoring
+  bulletPrefab: {fileID: 6396521406585865662, guid: 57a4d97748f4e9843a1ee03138b6731d, type: 3}
+--- !u!4 &853917380
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 853917378}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &955928471
 GameObject:
   m_ObjectHideFlags: 0
@@ -206,9 +251,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnerAuthoring
   EnemyPrefab: {fileID: 6437658096193471022, guid: 3643e31cd7cc09045a771d4c310953e3, type: 3}
-  SpawnInterval: 1.5
-  SpawnAreaMin: {x: -6, y: 4}
-  SpawnAreaMax: {x: 6, y: 7}
+  SpawnInterval: 0.01
+  SpawnAreaMin: {x: -18, y: 18}
+  SpawnAreaMax: {x: 18, y: 18}
 --- !u!4 &955928473
 Transform:
   m_ObjectHideFlags: 0
@@ -275,3 +320,4 @@ SceneRoots:
   - {fileID: 955928473}
   - {fileID: 1112846818}
   - {fileID: 802386612}
+  - {fileID: 853917380}

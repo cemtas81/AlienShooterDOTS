@@ -27,59 +27,53 @@ public partial struct BulletLifetimeSystem : ISystem
     }
 }
 
-// Player'ın ateş etmesini ve mermi spawn'lamasını sağlayan sistem
 [BurstCompile]
 [UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct PlayerShootingSystem : ISystem
 {
-    Entity bulletPrefab;
     double lastFireTime;
-    const float fireCooldown = 0.15f; // 6.66/s
+    const float fireCooldown = 0.01f;
 
     public void OnCreate(ref SystemState state)
     {
         lastFireTime = 0;
-        bulletPrefab = Entity.Null;
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        // Prefab'ı bul (sadece bir kez, klasik yöntem)
-        if (bulletPrefab == Entity.Null)
+        // Prefab referansını query ile çek
+        Entity bulletPrefab = Entity.Null;
+        foreach (var prefabRef in SystemAPI.Query<RefRO<BulletPrefabReference>>())
         {
-            foreach (var (tag, entity) in SystemAPI.Query<BulletTag>().WithEntityAccess())
-            {
-                bulletPrefab = entity;
-                break;
-            }
-            if (bulletPrefab == Entity.Null)
-                return; // Prefab yoksa bekle
+            bulletPrefab = prefabRef.ValueRO.Prefab;
+            break;
         }
+        if (bulletPrefab == Entity.Null || !state.EntityManager.Exists(bulletPrefab))
+            return; // Prefab yoksa veya silindiyse çık
 
         float3 shootOffset = new float3(0, 0.5f, 0);
         float time = (float)SystemAPI.Time.ElapsedTime;
+
+        var ecb = new EntityCommandBuffer(Allocator.Temp);
 
         foreach (var (input, transform) in SystemAPI.Query<RefRO<PlayerInput>, RefRO<LocalTransform>>())
         {
             if (input.ValueRO.Fire && time - (float)lastFireTime >= fireCooldown)
             {
-                var ecb = new EntityCommandBuffer(Allocator.Temp);
                 var bullet = ecb.Instantiate(bulletPrefab);
-                // Pozisyon ve yön
                 ecb.SetComponent(bullet, new LocalTransform
                 {
                     Position = transform.ValueRO.Position + shootOffset,
                     Rotation = quaternion.identity,
-                    Scale = 1
+                    Scale = .2f
                 });
                 lastFireTime = time;
-                ecb.Playback(state.EntityManager);
             }
         }
-    }
-}
 
-// Mermi ileri hareket sistemi
+        ecb.Playback(state.EntityManager);
+    }
+}// Mermi ileri hareket sistemi
 [BurstCompile]
 public partial struct BulletMovementSystem : ISystem
 {
