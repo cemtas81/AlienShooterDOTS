@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8520104645417931524}
   - component: {fileID: 6329208906434279363}
   - component: {fileID: 2022139175851095784}
+  - component: {fileID: 9180218870779659279}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Bullet
@@ -111,3 +112,18 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &9180218870779659279
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6396521406585865662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b779a5d13548d114f92abbe2314b637f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BulletAuthoring
+  Speed: 12
+  Damage: 1
+  LifeTime: 2
