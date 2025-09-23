@@ -72,6 +72,7 @@ public partial struct PlayerShootingSystem : ISystem
         }
 
         ecb.Playback(state.EntityManager);
+        ecb.Dispose();
     }
 }// Mermi ileri hareket sistemi
 [BurstCompile]

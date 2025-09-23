@@ -43,5 +43,6 @@ public partial struct EnemySpawnerSystem : ISystem
             }
         }
         ecb.Playback(state.EntityManager);
+        ecb.Dispose();
     }
 }

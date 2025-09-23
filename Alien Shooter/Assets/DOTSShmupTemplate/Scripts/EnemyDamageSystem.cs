@@ -1,25 +1,26 @@
+using System;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Transforms;
 using Unity.Mathematics;
+using Unity.Transforms;
 
 [BurstCompile]
 public partial struct EnemyDamageSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
-        var ecb = new EntityCommandBuffer(Allocator.Temp);
+        var ecb = new EntityCommandBuffer(Allocator.TempJob);
 
         var bulletQuery = SystemAPI.QueryBuilder().WithAll<BulletTag, LocalTransform, DamageComponent>().Build();
         var enemyQuery = SystemAPI.QueryBuilder().WithAll<EnemyTag, LocalTransform, HealthComponent>().Build();
 
-        var bulletEntities = bulletQuery.ToEntityArray(Allocator.Temp);
-        var bulletTransforms = bulletQuery.ToComponentDataArray<LocalTransform>(Allocator.Temp);
-        var bulletDamages = bulletQuery.ToComponentDataArray<DamageComponent>(Allocator.Temp);
+        var bulletEntities = bulletQuery.ToEntityArray(Allocator.TempJob);
+        var bulletTransforms = bulletQuery.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
+        var bulletDamages = bulletQuery.ToComponentDataArray<DamageComponent>(Allocator.TempJob);
 
-        var enemyEntities = enemyQuery.ToEntityArray(Allocator.Temp);
-        var enemyTransforms = enemyQuery.ToComponentDataArray<LocalTransform>(Allocator.Temp);
+        var enemyEntities = enemyQuery.ToEntityArray(Allocator.TempJob);
+        var enemyTransforms = enemyQuery.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
 
         for (int i = 0; i < bulletEntities.Length; i++)
         {
@@ -28,25 +29,28 @@ public partial struct EnemyDamageSystem : ISystem
             for (int j = 0; j < enemyEntities.Length; j++)
             {
                 float3 enemyPos = enemyTransforms[j].Position;
-                if (math.distance(bulletPos, enemyPos) < 0.5f)
+                if (math.distancesq(bulletPos, enemyPos) < 0.25f) // mesafe karesini kullan, kök alma!
                 {
-                    // Damage enemy
                     var enemyEntity = enemyEntities[j];
                     var health = state.EntityManager.GetComponentData<HealthComponent>(enemyEntity);
                     health.Value -= bulletDamages[i].Value;
                     state.EntityManager.SetComponentData(enemyEntity, health);
 
-                    // Destroy bullet
                     ecb.DestroyEntity(bulletEntities[i]);
-
-                    // Eğer can 0 veya altıysa düşmanı sil
                     if (health.Value <= 0)
                         ecb.DestroyEntity(enemyEntity);
 
-                    break; // her mermi tek düşmana çarpsın
+                    break;
                 }
             }
         }
         ecb.Playback(state.EntityManager);
+        ecb.Dispose();
+
+        bulletEntities.Dispose();
+        bulletTransforms.Dispose();
+        bulletDamages.Dispose();
+        enemyEntities.Dispose();
+        enemyTransforms.Dispose();
     }
 }
