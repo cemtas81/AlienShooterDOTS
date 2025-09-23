@@ -13,5 +13,6 @@ public class PlayerBaker : Baker<PlayerAuthoring>
         var entity = GetEntity(TransformUsageFlags.Dynamic);
         AddComponent(entity, new PlayerTag());
         AddComponent(entity, new PlayerMoveSpeed { Value = authoring.MoveSpeed });
+        AddComponent<PlayerInput>(entity); // EKLE!
     }
 }
