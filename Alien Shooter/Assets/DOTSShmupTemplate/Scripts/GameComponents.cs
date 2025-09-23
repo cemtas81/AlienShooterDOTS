@@ -1,4 +1,5 @@
 using Unity.Entities;
+using Unity.Mathematics;
 
 public struct BulletTag : IComponentData {}
 public struct BulletSpeed : IComponentData { public float Value; }
@@ -16,4 +17,10 @@ public struct PlayerInput : IComponentData
 {
     public float2 Move;
     public bool Fire;
+}
+
+public struct GameManager : IComponentData { }
+public struct GameScore : IComponentData
+{
+    public int Value;
 }

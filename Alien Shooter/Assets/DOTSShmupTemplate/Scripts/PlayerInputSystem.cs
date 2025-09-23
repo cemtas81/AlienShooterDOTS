@@ -4,13 +4,6 @@ using Unity.Mathematics;
 using UnityEngine;
 using Unity.Collections;
 
-// Simple struct to store input direction
-public struct PlayerInput : IComponentData
-{
-    public float2 Move;
-    public bool Fire;
-}
-
 [UpdateInGroup(typeof(InitializationSystemGroup))]
 public partial struct PlayerInputSystem : ISystem
 {

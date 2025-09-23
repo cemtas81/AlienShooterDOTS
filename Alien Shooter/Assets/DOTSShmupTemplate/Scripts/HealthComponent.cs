@@ -1,9 +1,6 @@
-// Authoring için ayrý bir MonoBehaviour veya Baker sýnýfý gerekir:
+// Authoring iï¿½in ayrï¿½ bir MonoBehaviour veya Baker sï¿½nï¿½fï¿½ gerekir:
 using Unity.Entities;
 using UnityEngine;
 
-public struct HealthComponent : IComponentData
-{
-    public int Value;
-}
+
 
