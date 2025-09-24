@@ -34,14 +34,10 @@ public partial struct PlayerShootingSystem : ISystem
     double lastFireTime;
     const float fireCooldown = 0.01f;
 
-    public void OnCreate(ref SystemState state)
-    {
-        lastFireTime = 0;
-    }
+    public void OnCreate(ref SystemState state) { lastFireTime = 0; }
 
     public void OnUpdate(ref SystemState state)
     {
-        // Prefab referansını query ile çek
         Entity bulletPrefab = Entity.Null;
         foreach (var prefabRef in SystemAPI.Query<RefRO<BulletPrefabReference>>())
         {
@@ -49,7 +45,7 @@ public partial struct PlayerShootingSystem : ISystem
             break;
         }
         if (bulletPrefab == Entity.Null || !state.EntityManager.Exists(bulletPrefab))
-            return; // Prefab yoksa veya silindiyse çık
+            return;
 
         float3 shootOffset = new float3(0, 0, 0.5f);
         float time = (float)SystemAPI.Time.ElapsedTime;
@@ -61,10 +57,14 @@ public partial struct PlayerShootingSystem : ISystem
             if (input.ValueRO.Fire && time - (float)lastFireTime >= fireCooldown)
             {
                 var bullet = ecb.Instantiate(bulletPrefab);
+
+                // shootOffset'i oyuncunun baktığı yöne göre döndür:
+                float3 spawnPos = transform.ValueRO.Position + math.mul(transform.ValueRO.Rotation, shootOffset);
+
                 ecb.SetComponent(bullet, new LocalTransform
                 {
-                    Position = transform.ValueRO.Position + shootOffset,
-                    Rotation = quaternion.identity,
+                    Position = spawnPos,
+                    Rotation = transform.ValueRO.Rotation, // <-- Oyuncunun entity rotasyonu!
                     Scale = .2f
                 });
                 lastFireTime = time;
@@ -74,18 +74,20 @@ public partial struct PlayerShootingSystem : ISystem
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
     }
-}// Mermi ileri hareket sistemi
+}
+
 [BurstCompile]
 public partial struct BulletMovementSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
         float deltaTime = SystemAPI.Time.DeltaTime;
-        foreach (var (speed, transform) in 
+        foreach (var (speed, transform) in
             SystemAPI.Query<RefRO<BulletSpeed>, RefRW<LocalTransform>>()
             .WithAll<BulletTag>())
         {
-            transform.ValueRW.Position.z += speed.ValueRO.Value * deltaTime;
+            float3 forward = math.mul(transform.ValueRW.Rotation, new float3(0, 0, 1));
+            transform.ValueRW.Position += forward * speed.ValueRO.Value * deltaTime;
         }
     }
 }
