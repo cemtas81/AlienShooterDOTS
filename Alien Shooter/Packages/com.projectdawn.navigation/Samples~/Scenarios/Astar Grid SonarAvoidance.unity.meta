@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 725e0793a0e331d44b2e350ce525938f
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 239233
+  packageName: Agents Navigation
+  packageVersion: 4.2.5
+  assetPath: Packages/com.projectdawn.navigation/Samples~/Scenarios/Astar Grid SonarAvoidance.unity
+  uploadId: 786782

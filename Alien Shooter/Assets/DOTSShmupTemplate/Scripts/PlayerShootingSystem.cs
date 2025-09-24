@@ -51,7 +51,7 @@ public partial struct PlayerShootingSystem : ISystem
         if (bulletPrefab == Entity.Null || !state.EntityManager.Exists(bulletPrefab))
             return; // Prefab yoksa veya silindiyse çık
 
-        float3 shootOffset = new float3(0, 0.5f, 0);
+        float3 shootOffset = new float3(0, 0, 0.5f);
         float time = (float)SystemAPI.Time.ElapsedTime;
 
         var ecb = new EntityCommandBuffer(Allocator.Temp);
@@ -85,7 +85,7 @@ public partial struct BulletMovementSystem : ISystem
             SystemAPI.Query<RefRO<BulletSpeed>, RefRW<LocalTransform>>()
             .WithAll<BulletTag>())
         {
-            transform.ValueRW.Position.y += speed.ValueRO.Value * deltaTime;
+            transform.ValueRW.Position.z += speed.ValueRO.Value * deltaTime;
         }
     }
 }

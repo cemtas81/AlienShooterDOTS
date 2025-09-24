@@ -15,7 +15,7 @@ public partial struct PlayerMovementSystem : ISystem
             .WithAll<PlayerTag>())
         {
             var movement = input.ValueRO.Move;
-            transform.ValueRW.Position.xy += movement * speed.ValueRO.Value * deltaTime;
+            transform.ValueRW.Position.xz += movement * speed.ValueRO.Value * deltaTime;
         }
     }
 }
