@@ -132,7 +132,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb0da925383b51448863b19e834eaf4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthAuthoring
-  Value: 1
+  Health: 1
 --- !u!114 &-8686782977321668987
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -180,7 +180,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAgentAuthoring
   AttackRange: 10
   Damage: 10
-  LifeTime: 2
 --- !u!114 &1298627895187519535
 MonoBehaviour:
   m_ObjectHideFlags: 0

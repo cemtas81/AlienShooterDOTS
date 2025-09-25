@@ -499,6 +499,8 @@ GameObject:
   - component: {fileID: 1111759779}
   - component: {fileID: 1111759778}
   - component: {fileID: 1111759777}
+  - component: {fileID: 1111759781}
+  - component: {fileID: 1111759784}
   m_Layer: 0
   m_Name: HybridPlayer
   m_TagString: Player
@@ -663,6 +665,32 @@ MonoBehaviour:
   mainCamera: {fileID: 0}
   bulletPrefabGO: {fileID: 6396521406585865662, guid: 57a4d97748f4e9843a1ee03138b6731d, type: 3}
   firePoint: {fileID: 800584387}
+--- !u!114 &1111759781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1111759772}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb0da925383b51448863b19e834eaf4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HealthAuthoring
+  Health: 100
+--- !u!114 &1111759784
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1111759772}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf426c3811a51db42acedf48711e9b77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
+  health: 10
 --- !u!1 &1377134938
 GameObject:
   m_ObjectHideFlags: 0

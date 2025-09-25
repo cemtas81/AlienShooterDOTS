@@ -13,9 +13,7 @@ public class DamageBaker : Baker<DamageAuthoring>
 {
     public override void Bake(DamageAuthoring authoring)
     {
-        AddComponent(new DamageComponent
-        {
-            Value = authoring.Value
-        });
+        var entity = GetEntity(TransformUsageFlags.Dynamic);
+        AddComponent(entity,new DamageComponent { Value = authoring.Value });
     }
 }
