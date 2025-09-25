@@ -2,9 +2,7 @@ using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using ProjectDawn.Navigation; // <-- Dikkat!
-using ProjectDawn.Navigation.Hybrid; // Eðer gerekiyorsa
-// EnemyTag senin kendi tag'in
+using ProjectDawn.Navigation;
 
 [BurstCompile]
 public partial struct EnemyAgentMovementSystem : ISystem
@@ -22,10 +20,22 @@ public partial struct EnemyAgentMovementSystem : ISystem
         }
         if (!found) return;
 
-        foreach (var agentBody in SystemAPI.Query<RefRW<AgentBody>>().WithAll<EnemyTag>())
+        foreach (var (agentBody, enemyTransform, attackRange) in
+            SystemAPI.Query<RefRW<AgentBody>, RefRO<LocalTransform>, RefRO<AttackRange>>().WithAll<EnemyTag>())
         {
-            agentBody.ValueRW.Destination = playerPos;
-            agentBody.ValueRW.IsStopped = false;
+            float distance = math.distance(playerPos, enemyTransform.ValueRO.Position);
+            if (distance <= attackRange.ValueRO.Value)
+            {
+                // Attack range'de: hareketi durdur
+                agentBody.ValueRW.IsStopped = true;
+               
+            }
+            else
+            {
+                // Attack range dýþýnda: player'a doðru yürü
+                agentBody.ValueRW.Destination = playerPos;
+                agentBody.ValueRW.IsStopped = false;
+            }
         }
     }
 }
