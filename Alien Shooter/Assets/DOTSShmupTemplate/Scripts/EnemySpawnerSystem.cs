@@ -6,16 +6,6 @@ using Unity.Transforms;
 using UnityEngine;
 
 
-
-public struct EnemySpawner : IComponentData
-{
-    public Entity EnemyPrefab;
-    public float SpawnInterval;
-    public Vector2 SpawnAreaMin;
-    public Vector2 SpawnAreaMax;
-    public float TimeUntilNextSpawn;
-}
-
 [BurstCompile]
 public partial struct EnemySpawnerSystem : ISystem
 {
@@ -30,16 +20,26 @@ public partial struct EnemySpawnerSystem : ISystem
             spawner.ValueRW.TimeUntilNextSpawn -= deltaTime;
             if (spawner.ValueRW.TimeUntilNextSpawn <= 0f)
             {
-                // Spawn yeni düşman
-                var prefab = spawner.ValueRO.EnemyPrefab;
+                // Sıra: önce MeleeCount kadar melee, sonra RangedCount kadar ranged, sonra tekrar başa
+                int cycle = spawner.ValueRO.MeleeCount + spawner.ValueRO.RangedCount;
+                int spawnPosInCycle = spawner.ValueRW.SpawnCounter % cycle;
+
+                Entity enemyPrefab;
+                if (spawnPosInCycle < spawner.ValueRO.MeleeCount)
+                    enemyPrefab = spawner.ValueRO.MeleeEnemyPrefab;
+                else
+                    enemyPrefab = spawner.ValueRO.RangedEnemyPrefab;
+
                 var pos = new float3(
                     random.NextFloat(spawner.ValueRO.SpawnAreaMin.x, spawner.ValueRO.SpawnAreaMax.x),
                     random.NextFloat(spawner.ValueRO.SpawnAreaMin.y, spawner.ValueRO.SpawnAreaMax.y),
                     0f
                 );
-                var enemy = ecb.Instantiate(prefab);
+                var enemy = ecb.Instantiate(enemyPrefab);
                 ecb.SetComponent(enemy, LocalTransform.FromPosition(pos));
+
                 spawner.ValueRW.TimeUntilNextSpawn = spawner.ValueRO.SpawnInterval;
+                spawner.ValueRW.SpawnCounter++;
             }
         }
         ecb.Playback(state.EntityManager);

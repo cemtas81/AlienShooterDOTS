@@ -32,7 +32,7 @@ public partial struct BulletLifetimeSystem : ISystem
 public partial struct PlayerShootingSystem : ISystem
 {
     double lastFireTime;
-    const float fireCooldown = 0.01f;
+    const float fireCooldown = 0.001f;
 
     public void OnCreate(ref SystemState state) { lastFireTime = 0; }
 
