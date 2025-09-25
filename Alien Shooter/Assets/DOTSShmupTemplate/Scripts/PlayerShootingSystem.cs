@@ -87,7 +87,15 @@ public partial struct BulletMovementSystem : ISystem
             .WithAll<BulletTag>())
         {
             float3 forward = math.mul(transform.ValueRW.Rotation, new float3(0, 0, 1));
-            transform.ValueRW.Position += forward * speed.ValueRO.Value * deltaTime;
+            transform.ValueRW.Position += deltaTime * speed.ValueRO.Value * forward;
+        }
+        // Enemy bullet'lar
+        foreach (var (data, transform) in
+            SystemAPI.Query<RefRO<BulletData>, RefRW<LocalTransform>>()
+            .WithAll<EnemyBulletTag>())
+        {
+            float3 forward = math.mul(transform.ValueRW.Rotation, new float3(0, 0, 1));
+            transform.ValueRW.Position += data.ValueRO.Speed * deltaTime * forward;
         }
     }
 }

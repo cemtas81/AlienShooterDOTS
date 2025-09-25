@@ -344,6 +344,8 @@ GameObject:
   m_Component:
   - component: {fileID: 853917380}
   - component: {fileID: 853917379}
+  - component: {fileID: 853917382}
+  - component: {fileID: 853917381}
   m_Layer: 0
   m_Name: BulletPrefabReference
   m_TagString: Untagged
@@ -379,6 +381,32 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &853917381
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 853917378}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67ee5f21c3b267c4b80b5a0efbf7b313, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyBulletPrefabReferenceAuthoring
+  enemyBulletPrefab: {fileID: 6396521406585865662, guid: f669aba6dfb04f447b3207484bbd278d, type: 3}
+--- !u!114 &853917382
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 853917378}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d7e5279be530bb43852f1f76598ac06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyMeleePrefabReferenceAuthoring
+  enemyMeleePrefab: {fileID: 2534162519866597772, guid: 4811803adc86891458cd4996ae1d3646, type: 3}
 --- !u!1 &955928471
 GameObject:
   m_ObjectHideFlags: 0

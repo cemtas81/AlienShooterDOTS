@@ -16,6 +16,8 @@ public class EnemyBaker : Baker<EnemyAuthoring>
         AddComponent(entity, new EnemyTag());
         AddComponent(entity, new EnemyMoveSpeed { Value = authoring.MoveSpeed });
         AddComponent(entity, new DamageComponent { Value = authoring.Damage });
-        AddComponent(entity, new AttackRange { Value = authoring.AttackRange }); 
+        AddComponent(entity, new AttackRange { Value = authoring.AttackRange });
+        AddBuffer<AttackFlag>(entity);
+        AddComponent(entity, new Cooldown { Value = 0f });
     }
 }

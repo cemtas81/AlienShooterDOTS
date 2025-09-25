@@ -1,5 +1,4 @@
 using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -7,20 +6,27 @@ using Unity.Transforms;
 [BurstCompile]
 public partial struct EnemyAttackJob : IJobEntity
 {
-    [ReadOnly] public float3 PlayerPosition;
+    public float3 PlayerPosition;
 
     void Execute(
         in LocalTransform enemyTransform,
         in AttackRange attackRange,
-        in Entity entity // optional: enemy entity referansı
+        in Cooldown cooldown,
+        Entity entity,
+        ref DynamicBuffer<AttackFlag> attackFlags
     )
     {
         float distance = math.distance(PlayerPosition, enemyTransform.Position);
 
+        if (cooldown.Value > 0f)
+            return;
+
         if (distance <= attackRange.Value)
         {
-            // Saldırı kararı burada: örnek olarak bir AttackFlag ekleyebilirsin
-            // (işi başka bir sisteme devretmek için)
+            // AttackType: 1 = Ranged, 2 = Melee
+            byte type = attackRange.Value > 1f ? (byte)1 : (byte)2;
+            attackFlags.Add(new AttackFlag { AttackType = type });
+            // Cooldown reset başka bir sistemde yapılır
         }
     }
 }
