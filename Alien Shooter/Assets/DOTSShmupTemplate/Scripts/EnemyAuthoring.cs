@@ -19,5 +19,6 @@ public class EnemyBaker : Baker<EnemyAuthoring>
         AddComponent(entity, new AttackRange { Value = authoring.AttackRange });
         AddBuffer<AttackFlag>(entity);
         AddComponent(entity, new Cooldown { Value = 0f });
+
     }
 }

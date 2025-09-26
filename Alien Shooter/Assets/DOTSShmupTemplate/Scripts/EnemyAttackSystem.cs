@@ -4,26 +4,22 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using ProjectDawn.Navigation; // AgentLocomotion burada ise
 
 [BurstCompile]
 public partial struct EnemyAttackJob : IJobEntity
 {
-    public float3 PlayerPosition;
-
     void Execute(
-        in LocalTransform enemyTransform,
+        in AgentBody agent,
         in AttackRange attackRange,
         in Cooldown cooldown,
-        Entity entity,
         ref DynamicBuffer<AttackFlag> attackFlags
     )
     {
-        float distance = math.distance(PlayerPosition, enemyTransform.Position);
-
         if (cooldown.Value > 0f)
             return;
 
-        if (distance <= attackRange.Value)
+        if (agent.IsStopped)
         {
             // AttackType: 1 = Ranged, 2 = Melee
             byte type = attackRange.Value > 1f ? (byte)1 : (byte)2;
@@ -38,19 +34,7 @@ public partial struct EnemyAttackSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
-        // Player entity pozisyonunu bul
-        float3 playerPos = float3.zero;
-        foreach (var (playerTransform, _) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<PlayerTag>>())
-        {
-            playerPos = playerTransform.ValueRO.Position;
-            break;
-        }
-
-        // Jobify: tüm enemy'ler için paralel çalışır!
-        var job = new EnemyAttackJob
-        {
-            PlayerPosition = playerPos
-        };
+        var job = new EnemyAttackJob { };
         job.ScheduleParallel();
     }
 }
@@ -64,8 +48,7 @@ public partial struct EnemyAttackDamageToPlayerSystem : ISystem
         GameObject playerGO = GameObject.FindWithTag("Player");
         if (playerGO == null) return;
 
-        var playerHealth = playerGO.GetComponent<PlayerHealth>();
-        if (playerHealth == null) return;
+        if (!playerGO.TryGetComponent<PlayerHealth>(out var playerHealth)) return;
 
         float3 playerPos = playerGO.transform.position;
 

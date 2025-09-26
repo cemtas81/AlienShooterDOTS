@@ -149,7 +149,7 @@ MonoBehaviour:
   Speed: 3.5
   Acceleration: 8
   AngularSpeed: 120
-  StoppingDistance: 0.1
+  StoppingDistance: 6
   AutoBreaking: 1
   m_Layers: 1
 --- !u!114 &-3522325076053138899

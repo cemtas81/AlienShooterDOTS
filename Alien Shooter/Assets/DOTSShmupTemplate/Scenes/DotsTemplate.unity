@@ -642,12 +642,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 825ee44755f2e4846a6229365ed8d44c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: ProjectDawn.Navigation.Hybrid::ProjectDawn.Navigation.Hybrid.AgentAuthoring
-  MotionType: 3
+  MotionType: 1
   Speed: 3.5
   Acceleration: 8
   AngularSpeed: 120
   StoppingDistance: 0.1
-  AutoBreaking: 1
+  AutoBreaking: 0
   m_Layers: 1
 --- !u!114 &1111759780
 MonoBehaviour:
@@ -677,7 +677,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb0da925383b51448863b19e834eaf4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthAuthoring
-  Health: 100
+  Health: 0
 --- !u!114 &1111759784
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -690,7 +690,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf426c3811a51db42acedf48711e9b77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
-  health: 10
+  health: 100000
 --- !u!1 &1377134938
 GameObject:
   m_ObjectHideFlags: 0
