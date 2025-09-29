@@ -20,20 +20,28 @@ public partial struct EnemyAgentMovementSystem : ISystem
         }
         if (!found) return;
 
-        foreach (var (agentBody, enemyTransform, attackRange) in
-            SystemAPI.Query<RefRW<AgentBody>, RefRO<LocalTransform>, RefRO<AttackRange>>().WithAll<EnemyTag>())
+        new EnemyAgentMovementJob
         {
-            float distance = math.distance(playerPos, enemyTransform.ValueRO.Position);
+            PlayerPos = playerPos
+        }
+        .ScheduleParallel();
+    }
+
+    [BurstCompile]
+    public partial struct EnemyAgentMovementJob : IJobEntity
+    {
+        public float3 PlayerPos;
+
+        public readonly void Execute(RefRW<AgentBody> agentBody, RefRO<LocalTransform> enemyTransform, RefRO<AttackRange> attackRange)
+        {
+            float distance = math.distance(PlayerPos, enemyTransform.ValueRO.Position);
             if (distance <= attackRange.ValueRO.Value)
             {
-                // Attack range'de: hareketi durdur
                 agentBody.ValueRW.IsStopped = true;
-               
             }
             else
             {
-                // Attack range dýþýnda: player'a doðru yürü
-                agentBody.ValueRW.Destination = playerPos;
+                agentBody.ValueRW.Destination = PlayerPos;
                 agentBody.ValueRW.IsStopped = false;
             }
         }

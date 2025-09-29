@@ -21,11 +21,24 @@ public partial struct EnemyMovementSystem : ISystem
         }
         if (!found) return;
 
-        foreach (var (moveSpeed, transform) in
-            SystemAPI.Query<RefRO<EnemyMoveSpeed>, RefRW<LocalTransform>>().WithAll<EnemyTag>())
+        new EnemyMoveJob
         {
-            float3 direction = math.normalize(playerPos - transform.ValueRO.Position);
-            transform.ValueRW.Position += deltaTime * moveSpeed.ValueRO.Value * direction;
+            PlayerPos = playerPos,
+            DeltaTime = deltaTime
+        }
+        .ScheduleParallel();
+    }
+
+    [BurstCompile]
+    public partial struct EnemyMoveJob : IJobEntity
+    {
+        public float3 PlayerPos;
+        public float DeltaTime;
+
+        public readonly void Execute(RefRO<EnemyMoveSpeed> moveSpeed, RefRW<LocalTransform> transform)
+        {
+            float3 direction = math.normalize(PlayerPos - transform.ValueRO.Position);
+            transform.ValueRW.Position += DeltaTime * moveSpeed.ValueRO.Value * direction;
         }
     }
 }
