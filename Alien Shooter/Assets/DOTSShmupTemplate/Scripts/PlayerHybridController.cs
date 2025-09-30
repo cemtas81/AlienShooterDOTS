@@ -24,6 +24,7 @@ public class PlayerHybridController : MonoBehaviour
     private EntityManager entityManager;
     private Entity bulletPrefabEntity;
     private Entity playerEntity;
+    [SerializeField]private Animator playerAnimator;
 
     void Start()
     {
@@ -66,6 +67,7 @@ public class PlayerHybridController : MonoBehaviour
         HandleRotation();
         UpdatePlayerEntityPosition();
         HandleInputBridge();
+
   
     }
 
@@ -73,10 +75,11 @@ public class PlayerHybridController : MonoBehaviour
     {
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
-        Vector3 moveInput = new Vector3(h, 0, v);
+        Vector3 moveInput = new(h, 0, v);
         if (moveInput.magnitude > 1f) moveInput.Normalize();
 
-        transform.position += moveInput * moveSpeed * Time.deltaTime;
+        transform.position += moveSpeed * Time.deltaTime * moveInput;
+        AnimateThePlayer(moveInput);
     }
     void UpdatePlayerEntityPosition()
     {
@@ -92,7 +95,7 @@ public class PlayerHybridController : MonoBehaviour
     {
         if (mainCamera == null) mainCamera = Camera.main;
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-        Plane ground = new Plane(Vector3.up, transform.position);
+        Plane ground = new(Vector3.up, transform.position);
         if (ground.Raycast(ray, out float distance))
         {
             Vector3 hit = ray.GetPoint(distance);
@@ -102,7 +105,18 @@ public class PlayerHybridController : MonoBehaviour
                 transform.rotation = Quaternion.LookRotation(dir, Vector3.up);
         }
     }
+    void AnimateThePlayer(Vector3 desiredDirection)
+    {
+        if (!playerAnimator)
+            return;
 
+        Vector3 movement = new (desiredDirection.x, 0f, desiredDirection.z);
+        float forw = Vector3.Dot(movement, transform.forward);
+        float stra = Vector3.Dot(movement, transform.right);
+
+        playerAnimator.SetFloat("Forward", forw);
+        playerAnimator.SetFloat("Strafe", stra);
+    }
     void HandleInputBridge()
     {
         // DOTS sisteminin input ile uyumlu çalışması için PlayerInput componentini güncelliyoruz

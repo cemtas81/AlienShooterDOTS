@@ -4,24 +4,40 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 
-
-// Bullet yaşam süresini yöneten sistem
 [BurstCompile]
 public partial struct BulletLifetimeSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
         float deltaTime = SystemAPI.Time.DeltaTime;
-        var ecb = new EntityCommandBuffer(Allocator.Temp);
+        var ecb = new EntityCommandBuffer(Allocator.TempJob);
+        var ecbParallel = ecb.AsParallelWriter();
 
-        foreach (var (life, entity) in SystemAPI.Query<RefRW<BulletLifeTime>>().WithEntityAccess())
+        new BulletLifetimeJob
         {
-            life.ValueRW.Value -= deltaTime;
-            if (life.ValueRW.Value <= 0f)
-                ecb.DestroyEntity(entity);
+            DeltaTime = deltaTime,
+            ECB = ecbParallel
         }
+        .ScheduleParallel();
+
+        state.Dependency.Complete();
 
         ecb.Playback(state.EntityManager);
+        ecb.Dispose();
+    }
+
+    [BurstCompile]
+    public partial struct BulletLifetimeJob : IJobEntity
+    {
+        public float DeltaTime;
+        public EntityCommandBuffer.ParallelWriter ECB;
+
+        public void Execute(Entity entity, RefRW<BulletLifeTime> life)
+        {
+            life.ValueRW.Value -= DeltaTime;
+            if (life.ValueRW.Value <= 0f)
+                ECB.DestroyEntity(0, entity); // sortKey olarak 0 kullanılıyor
+        }
     }
 }
 
@@ -48,29 +64,54 @@ public partial struct PlayerShootingSystem : ISystem
         float3 shootOffset = new float3(0, 0, 0.5f);
         float time = (float)SystemAPI.Time.ElapsedTime;
 
-        var ecb = new EntityCommandBuffer(Allocator.Temp);
+        var ecb = new EntityCommandBuffer(Allocator.TempJob);
+        var ecbParallel = ecb.AsParallelWriter();
 
-        foreach (var (input, transform) in SystemAPI.Query<RefRO<PlayerInput>, RefRO<LocalTransform>>())
+        new PlayerShootJob
         {
-            if (input.ValueRO.Fire && time - (float)lastFireTime >= fireCooldown)
-            {
-                var bullet = ecb.Instantiate(bulletPrefab);
-
-                // shootOffset'i oyuncunun baktığı yöne göre döndür:
-                float3 spawnPos = transform.ValueRO.Position + math.mul(transform.ValueRO.Rotation, shootOffset);
-
-                ecb.SetComponent(bullet, new LocalTransform
-                {
-                    Position = spawnPos,
-                    Rotation = transform.ValueRO.Rotation, // <-- Oyuncunun entity rotasyonu!
-                    Scale = .2f
-                });
-                lastFireTime = time;
-            }
+            BulletPrefab = bulletPrefab,
+            ShootOffset = shootOffset,
+            Time = time,
+            LastFireTime = (float)lastFireTime,
+            FireCooldown = fireCooldown,
+            ECB = ecbParallel
         }
+        .ScheduleParallel();
+
+        state.Dependency.Complete();
 
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
+
+        lastFireTime = time;
+    }
+
+    [BurstCompile]
+    public partial struct PlayerShootJob : IJobEntity
+    {
+        public Entity BulletPrefab;
+        public float3 ShootOffset;
+        public float Time;
+        public float LastFireTime;
+        public float FireCooldown;
+        public EntityCommandBuffer.ParallelWriter ECB;
+
+        public void Execute(in PlayerInput input, in LocalTransform transform)
+        {
+            if (input.Fire && Time - LastFireTime >= FireCooldown)
+            {
+                var bullet = ECB.Instantiate(0, BulletPrefab);
+
+                float3 spawnPos = transform.Position + math.mul(transform.Rotation, ShootOffset);
+
+                ECB.SetComponent(0, bullet, new LocalTransform
+                {
+                    Position = spawnPos,
+                    Rotation = transform.Rotation,
+                    Scale = 0.2f
+                });
+            }
+        }
     }
 }
 
@@ -80,20 +121,41 @@ public partial struct BulletMovementSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         float deltaTime = SystemAPI.Time.DeltaTime;
-        foreach (var (speed, transform) in
-            SystemAPI.Query<RefRO<BulletSpeed>, RefRW<LocalTransform>>()
-            .WithAll<BulletTag>())
+
+        new BulletMoveJob
         {
-            float3 forward = math.mul(transform.ValueRW.Rotation, new float3(0, 0, 1));
-            transform.ValueRW.Position += deltaTime * speed.ValueRO.Value * forward;
+            DeltaTime = deltaTime
         }
-        // Enemy bullet'lar
-        foreach (var (data, transform) in
-            SystemAPI.Query<RefRO<BulletData>, RefRW<LocalTransform>>()
-            .WithAll<EnemyBulletTag>())
+        .ScheduleParallel();
+
+        new EnemyBulletMoveJob
+        {
+            DeltaTime = deltaTime
+        }
+        .ScheduleParallel();
+    }
+
+    [BurstCompile]
+    public partial struct BulletMoveJob : IJobEntity
+    {
+        public float DeltaTime;
+
+        public void Execute(RefRO<BulletSpeed> speed, RefRW<LocalTransform> transform, in BulletTag bulletTag)
         {
             float3 forward = math.mul(transform.ValueRW.Rotation, new float3(0, 0, 1));
-            transform.ValueRW.Position += data.ValueRO.Speed * deltaTime * forward;
+            transform.ValueRW.Position += DeltaTime * speed.ValueRO.Value * forward;
+        }
+    }
+
+    [BurstCompile]
+    public partial struct EnemyBulletMoveJob : IJobEntity
+    {
+        public float DeltaTime;
+
+        public void Execute(RefRO<BulletData> data, RefRW<LocalTransform> transform, in EnemyBulletTag enemyBulletTag)
+        {
+            float3 forward = math.mul(transform.ValueRW.Rotation, new float3(0, 0, 1));
+            transform.ValueRW.Position += data.ValueRO.Speed * DeltaTime * forward;
         }
     }
 }

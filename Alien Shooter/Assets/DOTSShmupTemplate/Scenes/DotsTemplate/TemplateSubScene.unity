@@ -366,7 +366,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d95225d61aa24d4aa2e111e8042e830, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnerAuthoring
-  MeleeEnemyPrefab: {fileID: 6437658096193471022, guid: d36c9e240c80e2b49ae6b5a76d8a94fc, type: 3}
+  MeleeEnemyPrefab: {fileID: 194111867853354878, guid: cfad2f69404cb1b4b96bc6bdf8cce741, type: 3}
   MeleeCount: 5
   RangedEnemyPrefab: {fileID: 6437658096193471022, guid: f55e59dab8a47a648860200886ef6089, type: 3}
   RangedCount: 1
