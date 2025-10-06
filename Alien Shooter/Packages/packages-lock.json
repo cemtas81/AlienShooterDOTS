@@ -10,16 +10,6 @@
         "com.unity.modules.ui": "1.0.0"
       }
     },
-    "com.sniveler-code.gpu-animation": {
-      "version": "file:com.sniveler-code.gpu-animation",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {
-        "com.unity.entities": "1.0.0-pre.15",
-        "com.unity.entities.graphics": "1.0.0-pre.15",
-        "com.unity.burst": "1.7.4"
-      }
-    },
     "com.unity.ai.navigation": {
       "version": "2.0.9",
       "depth": 0,
