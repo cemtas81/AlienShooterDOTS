@@ -14,7 +14,7 @@ public partial struct AttackLifetimeSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         float deltaTime = SystemAPI.Time.DeltaTime;
-        var ecb = new EntityCommandBuffer(Allocator.Temp);
+        var ecb = new EntityCommandBuffer(Allocator.TempJob);
 
         foreach (var (life, entity) in SystemAPI.Query<RefRW<AttackLifetime>>().WithEntityAccess())
         {

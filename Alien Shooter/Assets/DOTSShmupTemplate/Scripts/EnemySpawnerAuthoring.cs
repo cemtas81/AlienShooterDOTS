@@ -26,8 +26,8 @@ public struct EnemySpawner : IComponentData
     public int RangedCount;
 
     public float SpawnInterval;
-    public Vector2 SpawnAreaMin;
-    public Vector2 SpawnAreaMax;
+    //public Vector2 SpawnAreaMin;
+    //public Vector2 SpawnAreaMax;
     public float TimeUntilNextSpawn;
     public int SpawnCounter; // toplam kaç enemy spawn edildi (sýra için)
 }
@@ -44,8 +44,8 @@ public class EnemySpawnerBaker : Baker<EnemySpawnerAuthoring>
             MeleeCount = authoring.MeleeCount,
             RangedCount = authoring.RangedCount,
             SpawnInterval = authoring.SpawnInterval,
-            SpawnAreaMin = authoring.SpawnAreaMin,
-            SpawnAreaMax = authoring.SpawnAreaMax,
+            //SpawnAreaMin = authoring.SpawnAreaMin,
+            //SpawnAreaMax = authoring.SpawnAreaMax,
             TimeUntilNextSpawn = 0f,
             SpawnCounter = 0
         });

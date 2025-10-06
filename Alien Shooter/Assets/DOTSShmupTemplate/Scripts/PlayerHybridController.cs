@@ -13,14 +13,14 @@ public class PlayerHybridController : MonoBehaviour
 {
     [Header("Movement")]
     public float moveSpeed = 8f;
-
+    private Rigidbody rb;
     [Header("Rotation")]
     public Camera mainCamera;
 
     [Header("DOTS Integration")]
     public GameObject bulletPrefabGO; // DOTS'a bake edilmiş BulletAuthoring prefabı
     public Transform firePoint;
-
+    
     private EntityManager entityManager;
     private Entity bulletPrefabEntity;
     private Entity playerEntity;
@@ -29,7 +29,7 @@ public class PlayerHybridController : MonoBehaviour
     void Start()
     {
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-
+        rb = GetComponent<Rigidbody>();
         // DOTS bullet prefab entity'sini bul
         var query = entityManager.CreateEntityQuery(typeof(BulletPrefabReference));
         if (query.CalculateEntityCount() > 0)
@@ -78,7 +78,8 @@ public class PlayerHybridController : MonoBehaviour
         Vector3 moveInput = new(h, 0, v);
         if (moveInput.magnitude > 1f) moveInput.Normalize();
 
-        transform.position += moveSpeed * Time.deltaTime * moveInput;
+        //transform.position += moveSpeed * Time.deltaTime * moveInput;
+        rb.MovePosition(rb.position+moveSpeed * Time.deltaTime * moveInput); // Rigidbody ile çarpışma için
         AnimateThePlayer(moveInput);
     }
     void UpdatePlayerEntityPosition()
@@ -102,7 +103,7 @@ public class PlayerHybridController : MonoBehaviour
             Vector3 dir = hit - transform.position;
             dir.y = 0;
             if (dir.sqrMagnitude > 0.001f)
-                transform.rotation = Quaternion.LookRotation(dir, Vector3.up);
+                rb.rotation = Quaternion.LookRotation(dir, Vector3.up);
         }
     }
     void AnimateThePlayer(Vector3 desiredDirection)

@@ -34,7 +34,15 @@ public partial struct EnemyAgentMovementSystem : ISystem
 
         public readonly void Execute(RefRW<AgentBody> agentBody, RefRO<LocalTransform> enemyTransform, RefRO<AttackRange> attackRange)
         {
-            float distance = math.distance(PlayerPos, enemyTransform.ValueRO.Position);
+            float3 enemyPos = enemyTransform.ValueRO.Position;
+            if (math.any(math.isnan(enemyPos)) || math.any(math.isnan(PlayerPos)))
+            {
+                // NaN tespit et, entity'yi durdur veya logla (ama Burst'ta Debug yok, external system'e flag set et)
+                agentBody.ValueRW.IsStopped = true;
+                return;  // Veya destroy için ECB kullan, ama job'dan deðil
+            }
+
+            float distance = math.distance(PlayerPos, enemyPos);
             if (distance <= attackRange.ValueRO.Value)
             {
                 agentBody.ValueRW.IsStopped = true;

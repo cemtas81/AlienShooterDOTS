@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 2e2b3653b97dcce4b9d7d97af765e476
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2800000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 246164
+  packageName: Gpu Animation Entities
+  packageVersion: 0.5.5
+  assetPath: Packages/com.sniveler-code.gpu-animation/Runtime/Demo/Textures/AnimationTexture2.asset
+  uploadId: 579846

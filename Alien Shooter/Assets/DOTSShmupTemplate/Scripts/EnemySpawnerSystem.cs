@@ -10,7 +10,7 @@ public partial struct EnemySpawnerSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         float deltaTime = SystemAPI.Time.DeltaTime;
-        var ecb = new EntityCommandBuffer(Allocator.Temp);
+        var ecb = new EntityCommandBuffer(Allocator.TempJob);
 
         // Player pozisyonunu bul
         float3 playerPos = float3.zero;
@@ -45,10 +45,18 @@ public partial struct EnemySpawnerSystem : ISystem
                 // Çember etrafında spawn pozisyonu hesapla
                 float radius = 25f; // Çember yarıçapı
                 float angle = math.radians(360f * spawnPosInCycle / cycle);
-                float3 offset = new float3(math.cos(angle), 1f, math.sin(angle)) * radius; 
+                float3 offset = new float3(math.cos(angle), 0f, math.sin(angle)) * radius; // Y offset'i 0 yap
                 float3 pos = playerPos + offset;
-                pos.y = 1f; 
+                // Y pozisyonunu da player'ın Y pozisyonuna göre ayarla
+                pos.y = playerPos.y;
 
+                // NaN kontrolü ve log
+                if (float.IsNaN(pos.x) || float.IsNaN(pos.y) || float.IsNaN(pos.z))
+                {
+                    UnityEngine.Debug.LogError($"[EnemySpawnerSystem] NaN pozisyon tespit edildi! pos=({pos.x}, {pos.y}, {pos.z}) playerPos=({playerPos.x}, {playerPos.y}, {playerPos.z}) offset=({offset.x}, {offset.y}, {offset.z})");
+                }
+
+                // Devamında spawn işlemi
                 var enemy = ecb.Instantiate(enemyPrefab);
                 ecb.SetComponent(enemy, LocalTransform.FromPosition(pos));
 

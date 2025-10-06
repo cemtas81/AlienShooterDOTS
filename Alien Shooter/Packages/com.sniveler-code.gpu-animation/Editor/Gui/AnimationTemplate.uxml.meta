@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 010117832c3e989408f6daa655dd8984
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 13804, guid: 0000000000000000e000000000000000, type: 0}
+AssetOrigin:
+  serializedVersion: 1
+  productId: 246164
+  packageName: Gpu Animation Entities
+  packageVersion: 0.5.5
+  assetPath: Packages/com.sniveler-code.gpu-animation/Editor/Gui/AnimationTemplate.uxml
+  uploadId: 579846

@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 5ef19dbeda1e4a84981f0472ffc59a16
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 246164
+  packageName: Gpu Animation Entities
+  packageVersion: 0.5.5
+  assetPath: Packages/com.sniveler-code.gpu-animation/Runtime/Demo/Scripts/Components/WalkingSpawnerAuthoring.cs
+  uploadId: 579846
