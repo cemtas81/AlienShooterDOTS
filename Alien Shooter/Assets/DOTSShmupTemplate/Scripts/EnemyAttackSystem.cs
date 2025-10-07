@@ -57,7 +57,7 @@ public partial struct EnemyAttackDamageToPlayerSystem : ISystem
         // Enemy bullet'lar için
         foreach (var (bulletTransform, damage, bulletEntity) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<DamageComponent>>().WithAll<EnemyBulletTag>().WithEntityAccess())
         {
-            if (math.distancesq(playerPos, bulletTransform.ValueRO.Position) < 0.25f)
+            if (math.distancesq(playerPos, bulletTransform.ValueRO.Position) < 0.2f)
             {
                 playerHealth.TakeDamage(damage.ValueRO.Value);
                 ecb.DestroyEntity(bulletEntity);
@@ -66,7 +66,7 @@ public partial struct EnemyAttackDamageToPlayerSystem : ISystem
         // Enemy melee'ler için
         foreach (var (meleeTransform, damage, meleeEntity) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<DamageComponent>>().WithAll<EnemyMeleeTag>().WithEntityAccess())
         {
-            if (math.distancesq(playerPos, meleeTransform.ValueRO.Position) < 1.0f)
+            if (math.distancesq(playerPos, meleeTransform.ValueRO.Position) < .2f)
             {
                 playerHealth.TakeDamage(damage.ValueRO.Value);
                 ecb.DestroyEntity(meleeEntity);

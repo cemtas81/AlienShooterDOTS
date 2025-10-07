@@ -74,14 +74,14 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1102 &2739925296173704804
+--- !u!1102 &6206676202518581451
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: RifleAiming
+  m_Name: mixamo_com
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -94,7 +94,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 64e14f0bdfc8f8748b45726655c2643a, type: 2}
+  m_Motion: {fileID: -203655887218126122, guid: ccd4d9d961573554097bbbe815e61412, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -116,8 +116,8 @@ AnimatorStateMachine:
     m_State: {fileID: -6064418793566774544}
     m_Position: {x: 284.836, y: 81.52646, z: 0}
   - serializedVersion: 1
-    m_State: {fileID: 2739925296173704804}
-    m_Position: {x: 249.41486, y: 306.62216, z: 0}
+    m_State: {fileID: 6206676202518581451}
+    m_Position: {x: 318.7068, y: 281.92358, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
