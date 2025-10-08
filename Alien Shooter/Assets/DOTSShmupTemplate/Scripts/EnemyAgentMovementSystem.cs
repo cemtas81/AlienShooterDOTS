@@ -9,48 +9,60 @@ public partial struct EnemyAgentMovementSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
-        float3 playerPos = float3.zero;
-        bool found = false;
-
-        foreach (var (transform, tag) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<PlayerTag>>())
+        float3 playerPos = default;
+        foreach (var (playerTransform, _) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<PlayerTag>>())
         {
-            playerPos = transform.ValueRO.Position;
-            found = true;
-            break;
+            playerPos = playerTransform.ValueRO.Position;
+            goto HAVE_PLAYER;
         }
-        if (!found) return;
+        return;
 
-        new EnemyAgentMovementJob
+    HAVE_PLAYER:
+        state.Dependency = new ChasePlayerJob
         {
             PlayerPos = playerPos
-        }
-        .ScheduleParallel();
+        }.ScheduleParallel(state.Dependency);
     }
 
     [BurstCompile]
-    public partial struct EnemyAgentMovementJob : IJobEntity
+    public partial struct ChasePlayerJob : IJobEntity
     {
         public float3 PlayerPos;
 
-        public readonly void Execute(RefRW<AgentBody> agentBody, RefRO<LocalTransform> enemyTransform, RefRO<AttackRange> attackRange)
+        public void Execute(RefRW<AgentBody> body, RefRO<LocalTransform> selfTransform, RefRO<AttackRange> attackRange)
         {
-            float3 enemyPos = enemyTransform.ValueRO.Position;
-            if (math.any(math.isnan(enemyPos)) || math.any(math.isnan(PlayerPos)))
+            float3 pos = selfTransform.ValueRO.Position;
+            float3 dest = body.ValueRO.Destination;
+
+            // NaN guard
+            if (math.any(math.isnan(pos)) | math.any(math.isnan(PlayerPos)))
             {
-                // NaN tespit et, entity'yi durdur veya logla (ama Burst'ta Debug yok, external system'e flag set et)
-                agentBody.ValueRW.IsStopped = true;
-                return;  // Veya destroy için ECB kullan, ama job'dan deðil
+                if (!body.ValueRO.IsStopped)
+                    body.ValueRW.Stop();
+                return;
             }
 
-            float distance = math.distance(PlayerPos, enemyPos);
-            if (distance <= attackRange.ValueRO.Value)
+            // Saldýrý menziline girdiyse dur
+            float r = attackRange.ValueRO.Value;
+            float dx = PlayerPos.x - pos.x;
+            float dz = PlayerPos.z - pos.z;
+            float distSq = dx * dx + dz * dz;
+            float rSq = r * r;
+
+            if (distSq <= rSq)
             {
-                agentBody.ValueRW.IsStopped = true;
+                if (!body.ValueRO.IsStopped)
+                    body.ValueRW.Stop();
+                return;
             }
-            else
+
+            // Sadece duruyorsa veya hedef deðiþtiyse tekrar SetDestination
+            if (body.ValueRO.IsStopped ||
+                dest.x != PlayerPos.x ||
+                dest.y != PlayerPos.y ||
+                dest.z != PlayerPos.z)
             {
-                agentBody.ValueRW.Destination = PlayerPos;
-                agentBody.ValueRW.IsStopped = false;
+                body.ValueRW.SetDestination(PlayerPos);
             }
         }
     }

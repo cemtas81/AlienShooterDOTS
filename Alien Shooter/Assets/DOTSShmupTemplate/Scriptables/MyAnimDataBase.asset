@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5db671430d248e499a2437884636ff0, type: 3}
+  m_Name: MyAnimDataBase
+  m_EditorClassIdentifier: AnimationCooker.Runtime::AnimCooker.AnimDbSo
+  Models:
+  - ModelName: CharacterRobot
+    Skins:
+    - SkinClips:
+      - BeginFrame: 0
+        EndFrame: 3
+      Width: 128
+      Height: 128
+      Interval: 0.16666667
+      Pow2: 7
+      FrameRate: 6
+      VertCount: 3555
+      posPntRange:
+        x: -0.54810256
+        y: 1.724492
+      nmlPntRange:
+        x: -9.99878
+        y: 9.998491
+      tanPntRange:
+        x: -9.887307
+        y: 9.990648
+    Clips:
+    - ClipName: RifleRun
+      Length: 0.73333335
+  - ModelName: CharacterAlien
+    Skins:
+    - SkinClips:
+      - BeginFrame: 0
+        EndFrame: 1
+      Width: 128
+      Height: 128
+      Interval: 0.25
+      Pow2: 7
+      FrameRate: 4
+      VertCount: 4752
+      posPntRange:
+        x: -0.6122961
+        y: 1.6994789
+      nmlPntRange:
+        x: -0.99920464
+        y: 0.9998956
+      tanPntRange:
+        x: 3.4028235e+38
+        y: -3.4028235e+38
+    Clips:
+    - ClipName: RunInPlace
+      Length: 0.73333335

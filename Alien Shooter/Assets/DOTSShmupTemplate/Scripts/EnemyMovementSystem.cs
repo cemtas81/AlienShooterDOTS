@@ -6,11 +6,25 @@ using Unity.Mathematics;
 [BurstCompile]
 public partial struct EnemyMovementSystem : ISystem
 {
+    // Tick rate (ör: 0.1 saniye)
+    private float tickRate;
+    private float elapsed;
+
+    public void OnCreate(ref SystemState state)
+    {
+        tickRate = 0.1f; // 10Hz
+        elapsed = 0f;
+    }
+
     public void OnUpdate(ref SystemState state)
     {
         float deltaTime = SystemAPI.Time.DeltaTime;
+        elapsed += deltaTime;
 
-        // Player pozisyonunu bul
+        if (elapsed < tickRate)
+            return;
+
+        // Tick geldi, hareketi uygula
         float3 playerPos = float3.zero;
         bool found = false;
         foreach (var (playerTransform, _) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<PlayerTag>>())
@@ -24,9 +38,11 @@ public partial struct EnemyMovementSystem : ISystem
         new EnemyMoveJob
         {
             PlayerPos = playerPos,
-            DeltaTime = deltaTime
+            DeltaTime = elapsed // biriken süre ile hareket
         }
         .ScheduleParallel();
+
+        elapsed = 0f; // sayaç sýfýrla
     }
 
     [BurstCompile]

@@ -1,4 +1,3 @@
-
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -45,7 +44,8 @@ public class PlayerHybridController : MonoBehaviour
             playerEntity = entityManager.CreateEntity(
                 typeof(PlayerTag),
                 typeof(LocalTransform),
-                typeof(PlayerInput)
+                typeof(PlayerInput),
+                typeof(PlayerFirePoint)
             );
             entityManager.SetComponentData(playerEntity, LocalTransform.FromPosition((float3)transform.position));
             entityManager.SetComponentData(playerEntity, new PlayerInput { Move = float2.zero, Fire = false });
@@ -60,26 +60,26 @@ public class PlayerHybridController : MonoBehaviour
                 entityManager.AddComponentData(playerEntity, new PlayerInput { Move = float2.zero, Fire = false });
         }
     }
-
-    void Update()
+    private void Update()
     {
-        HandleMovement();
-        HandleRotation();
+        
         UpdatePlayerEntityPosition();
+        UpdateFirePointPosition(); // Yeni eklenen çağrı
         HandleInputBridge();
-
-  
     }
 
+    private void FixedUpdate()
+    {
+        HandleRotation();
+        HandleMovement();
+    }
     void HandleMovement()
     {
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
         Vector3 moveInput = new(h, 0, v);
         if (moveInput.magnitude > 1f) moveInput.Normalize();
-
-        //transform.position += moveSpeed * Time.deltaTime * moveInput;
-        rb.MovePosition(rb.position+moveSpeed * Time.deltaTime * moveInput); // Rigidbody ile çarpışma için
+        rb.MovePosition(rb.position+moveSpeed * Time.fixedDeltaTime * moveInput); // Rigidbody ile çarpışma için
         AnimateThePlayer(moveInput);
     }
     void UpdatePlayerEntityPosition()
@@ -103,7 +103,24 @@ public class PlayerHybridController : MonoBehaviour
             Vector3 dir = hit - transform.position;
             dir.y = 0;
             if (dir.sqrMagnitude > 0.001f)
-                rb.rotation = Quaternion.LookRotation(dir, Vector3.up);
+            {
+                // Transform rotasyonunu direkt değiştir
+                Quaternion targetRotation = Quaternion.LookRotation(dir, Vector3.up);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 15f);
+                // Rigidbody rotasyonunu transform'a göre güncelle
+                rb.rotation = transform.rotation;
+            }
+        }
+    }
+    // FixedUpdate içinde UpdatePlayerEntityPosition() çağrısından sonra ekleyin:
+    void UpdateFirePointPosition()
+    {
+        if (entityManager.Exists(playerEntity) && firePoint != null)
+        {
+            entityManager.SetComponentData(playerEntity, new PlayerFirePoint
+            {
+                Position = (float3)firePoint.position
+            });
         }
     }
     void AnimateThePlayer(Vector3 desiredDirection)

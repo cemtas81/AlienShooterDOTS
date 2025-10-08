@@ -46,7 +46,7 @@ public partial struct BulletLifetimeSystem : ISystem
 public partial struct PlayerShootingSystem : ISystem
 {
     double lastFireTime;
-    const float fireCooldown = 0.001f;
+    const float fireCooldown = 0.0005f;
 
     public void OnCreate(ref SystemState state) { lastFireTime = 0; }
 
@@ -61,7 +61,7 @@ public partial struct PlayerShootingSystem : ISystem
         if (bulletPrefab == Entity.Null || !state.EntityManager.Exists(bulletPrefab))
             return;
 
-        float3 shootOffset = new float3(0, 0, 0.5f);
+        //float3 shootOffset = new(0, 0.3f, 0.5f);
         float time = (float)SystemAPI.Time.ElapsedTime;
 
         var ecb = new EntityCommandBuffer(Allocator.TempJob);
@@ -70,7 +70,7 @@ public partial struct PlayerShootingSystem : ISystem
         new PlayerShootJob
         {
             BulletPrefab = bulletPrefab,
-            ShootOffset = shootOffset,
+            //ShootOffset = shootOffset,
             Time = time,
             LastFireTime = (float)lastFireTime,
             FireCooldown = fireCooldown,
@@ -90,49 +90,46 @@ public partial struct PlayerShootingSystem : ISystem
     public partial struct PlayerShootJob : IJobEntity
     {
         public Entity BulletPrefab;
-        public float3 ShootOffset;
         public float Time;
         public float LastFireTime;
         public float FireCooldown;
         public EntityCommandBuffer.ParallelWriter ECB;
 
-        public void Execute(in PlayerInput input, in LocalTransform transform)
+        public void Execute(in PlayerInput input, in LocalTransform transform, in PlayerFirePoint firePoint)
         {
             if (input.Fire && Time - LastFireTime >= FireCooldown)
             {
                 var bullet = ECB.Instantiate(0, BulletPrefab);
 
-                float3 spawnPos = transform.Position + math.mul(transform.Rotation, ShootOffset);
-
                 ECB.SetComponent(0, bullet, new LocalTransform
                 {
-                    Position = spawnPos,
+                    Position = firePoint.Position, // firePoint pozisyonunu kullan
                     Rotation = transform.Rotation,
                     Scale = 0.2f
                 });
             }
         }
     }
-}
 
-[BurstCompile]
-public partial struct BulletMovementSystem : ISystem
-{
-    public void OnUpdate(ref SystemState state)
+    [BurstCompile]
+    public partial struct BulletMovementSystem : ISystem
     {
-        float deltaTime = SystemAPI.Time.DeltaTime;
-
-        new BulletMoveJob
+        public void OnUpdate(ref SystemState state)
         {
-            DeltaTime = deltaTime
-        }
-        .ScheduleParallel();
+            float deltaTime = SystemAPI.Time.DeltaTime;
 
-        new EnemyBulletMoveJob
-        {
-            DeltaTime = deltaTime
+            new BulletMoveJob
+            {
+                DeltaTime = deltaTime
+            }
+            .ScheduleParallel();
+
+            new EnemyBulletMoveJob
+            {
+                DeltaTime = deltaTime
+            }
+            .ScheduleParallel();
         }
-        .ScheduleParallel();
     }
 
     [BurstCompile]

@@ -4,7 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
-using ProjectDawn.Navigation; // AgentLocomotion burada ise
+using ProjectDawn.Navigation;
 
 [BurstCompile]
 public partial struct EnemyAttackJob : IJobEntity
@@ -13,29 +13,33 @@ public partial struct EnemyAttackJob : IJobEntity
         in AgentBody agent,
         in AttackRange attackRange,
         in Cooldown cooldown,
-        ref DynamicBuffer<AttackFlag> attackFlags
-    )
+        ref DynamicBuffer<AttackFlag> attackFlags)
     {
+        // Cooldown devam ediyorsa çık
         if (cooldown.Value > 0f)
             return;
 
-        if (agent.IsStopped)
-        {
-            // AttackType: 1 = Ranged, 2 = Melee
-            byte type = attackRange.Value > 1f ? (byte)1 : (byte)2;
-            attackFlags.Add(new AttackFlag { AttackType = type });
-            // Cooldown reset başka bir sistemde yapılır
-        }
+        // Sadece durduysa saldırı
+        if (!agent.IsStopped)
+            return;
+
+        // (Opsiyonel) Aynı frame çoklu eklemeyi engelle
+        if (attackFlags.Length > 0)
+            return;
+
+        // AttackType: 1 = Ranged, 2 = Melee (basit eşik)
+        byte type = attackRange.Value > 1f ? (byte)1 : (byte)2;
+        attackFlags.Add(new AttackFlag { AttackType = type });
     }
 }
 
 [BurstCompile]
+[UpdateAfter(typeof(EnemyAgentMovementSystem))]
 public partial struct EnemyAttackSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
-        var job = new EnemyAttackJob { };
-        job.ScheduleParallel();
+        state.Dependency = new EnemyAttackJob().ScheduleParallel(state.Dependency);
     }
 }
 
@@ -44,32 +48,38 @@ public partial struct EnemyAttackDamageToPlayerSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
-        // Player GameObject'ini sahnedeki "Player" tag'ı ile bul
         GameObject playerGO = GameObject.FindWithTag("Player");
         if (playerGO == null) return;
-
         if (!playerGO.TryGetComponent<PlayerHealth>(out var playerHealth)) return;
 
         float3 playerPos = playerGO.transform.position;
+        const float hitRadiusSq = 0.2f * 0.2f;
 
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
-        // Enemy bullet'lar için
-        foreach (var (bulletTransform, damage, bulletEntity) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<DamageComponent>>().WithAll<EnemyBulletTag>().WithEntityAccess())
+        // Mermi
+        foreach (var (tr, dmg, ent) in SystemAPI
+                     .Query<RefRO<LocalTransform>, RefRO<DamageComponent>>()
+                     .WithAll<EnemyBulletTag>()
+                     .WithEntityAccess())
         {
-            if (math.distancesq(playerPos, bulletTransform.ValueRO.Position) < 0.2f)
+            if (math.distancesq(playerPos, tr.ValueRO.Position) <= hitRadiusSq)
             {
-                playerHealth.TakeDamage(damage.ValueRO.Value);
-                ecb.DestroyEntity(bulletEntity);
+                playerHealth.TakeDamage(dmg.ValueRO.Value);
+                ecb.DestroyEntity(ent);
             }
         }
-        // Enemy melee'ler için
-        foreach (var (meleeTransform, damage, meleeEntity) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<DamageComponent>>().WithAll<EnemyMeleeTag>().WithEntityAccess())
+
+        // Melee hitbox
+        foreach (var (tr, dmg, ent) in SystemAPI
+                     .Query<RefRO<LocalTransform>, RefRO<DamageComponent>>()
+                     .WithAll<EnemyMeleeTag>()
+                     .WithEntityAccess())
         {
-            if (math.distancesq(playerPos, meleeTransform.ValueRO.Position) < .2f)
+            if (math.distancesq(playerPos, tr.ValueRO.Position) <= hitRadiusSq)
             {
-                playerHealth.TakeDamage(damage.ValueRO.Value);
-                ecb.DestroyEntity(meleeEntity);
+                playerHealth.TakeDamage(dmg.ValueRO.Value);
+                ecb.DestroyEntity(ent);
             }
         }
 

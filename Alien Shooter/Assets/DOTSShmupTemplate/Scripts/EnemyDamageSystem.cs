@@ -12,45 +12,45 @@ public partial struct EnemyDamageSystem : ISystem
     {
         var ecb = new EntityCommandBuffer(Allocator.TempJob);
 
-        var bulletQuery = SystemAPI.QueryBuilder().WithAll<BulletTag, LocalTransform, DamageComponent>().Build();
-        var enemyQuery = SystemAPI.QueryBuilder().WithAll<EnemyTag, LocalTransform, HealthComponent>().Build();
-
-        var bulletEntities = bulletQuery.ToEntityArray(Allocator.TempJob);
-        var bulletTransforms = bulletQuery.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
-        var bulletDamages = bulletQuery.ToComponentDataArray<DamageComponent>(Allocator.TempJob);
-
-        var enemyEntities = enemyQuery.ToEntityArray(Allocator.TempJob);
-        var enemyTransforms = enemyQuery.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
-
-        for (int i = 0; i < bulletEntities.Length; i++)
+        // Her mermi için, yakın düşmanı bul ve hasar uygula
+        foreach (var (bulletTransform, bulletDamage, bulletEntity) in
+                 SystemAPI.Query<RefRO<LocalTransform>, RefRO<DamageComponent>>()
+                          .WithAll<BulletTag>()
+                          .WithEntityAccess())
         {
-            float3 bulletPos = bulletTransforms[i].Position;
+            float3 bulletPos = bulletTransform.ValueRO.Position;
+            bool hit = false;
 
-            for (int j = 0; j < enemyEntities.Length; j++)
+            foreach (var (enemyTransform, health, enemyEntity) in
+                     SystemAPI.Query<RefRO<LocalTransform>, RefRW<HealthComponent>>()
+                              .WithAll<EnemyTag>()
+                              .WithEntityAccess())
             {
-                float3 enemyPos = enemyTransforms[j].Position;
-                if (math.distancesq(bulletPos, enemyPos) < 0.25f) // mesafe karesini kullan, kök alma!
+                float3 enemyPos = enemyTransform.ValueRO.Position;
+                
+                // Sadece X ve Z eksenlerindeki mesafeyi kontrol et
+                float2 bulletPosXZ = new float2(bulletPos.x, bulletPos.z);
+                float2 enemyPosXZ = new float2(enemyPos.x, enemyPos.z);
+                float horizontalDistSq = math.distancesq(bulletPosXZ, enemyPosXZ);
+
+                // Çarpışma mesafesini arttırdım, daha kolay vuruş sağlamak için
+                if (horizontalDistSq < 1f) // 1f = 1 birim çarpışma yarıçapı, ihtiyaca göre ayarlanabilir
                 {
-                    var enemyEntity = enemyEntities[j];
-                    var health = state.EntityManager.GetComponentData<HealthComponent>(enemyEntity);
-                    health.Value -= bulletDamages[i].Value;
-                    state.EntityManager.SetComponentData(enemyEntity, health);
-
-                    ecb.DestroyEntity(bulletEntities[i]);
-                    if (health.Value <= 0)
+                    health.ValueRW.Value -= bulletDamage.ValueRO.Value;
+                    ecb.DestroyEntity(bulletEntity);
+                    
+                    if (health.ValueRW.Value <= 0)
+                    {
                         ecb.DestroyEntity(enemyEntity);
-
-                    break;
+                    }
+                    
+                    hit = true;
+                    break; // Bir mermi sadece bir düşmana vurabilir
                 }
             }
         }
+
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
-
-        bulletEntities.Dispose();
-        bulletTransforms.Dispose();
-        bulletDamages.Dispose();
-        enemyEntities.Dispose();
-        enemyTransforms.Dispose();
     }
 }

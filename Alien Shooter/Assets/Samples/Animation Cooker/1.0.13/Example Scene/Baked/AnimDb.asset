@@ -1,0 +1,196 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5db671430d248e499a2437884636ff0, type: 3}
+  m_Name: AnimDb
+  m_EditorClassIdentifier: 
+  Models:
+  - ModelName: LardAssSpider
+    Skins:
+    - SkinClips:
+      - BeginFrame: 0
+        EndFrame: 9
+      - BeginFrame: 10
+        EndFrame: 22
+      - BeginFrame: 23
+        EndFrame: 39
+      - BeginFrame: 40
+        EndFrame: 43
+      Width: 256
+      Height: 256
+      Interval: 0.14285715
+      Pow2: 8
+      FrameRate: 7
+      VertCount: 1339
+      posPntRange:
+        x: 0
+        y: 0
+      nmlPntRange:
+        x: 0
+        y: 0
+      tanPntRange:
+        x: 0
+        y: 0
+    - SkinClips:
+      - BeginFrame: 0
+        EndFrame: 3
+      - BeginFrame: 4
+        EndFrame: 8
+      - BeginFrame: 9
+        EndFrame: 15
+      - BeginFrame: 16
+        EndFrame: 17
+      Width: 128
+      Height: 128
+      Interval: 0.33333334
+      Pow2: 7
+      FrameRate: 3
+      VertCount: 787
+      posPntRange:
+        x: 0
+        y: 0
+      nmlPntRange:
+        x: 0
+        y: 0
+      tanPntRange:
+        x: 0
+        y: 0
+    - SkinClips:
+      - BeginFrame: 0
+        EndFrame: 1
+      - BeginFrame: 2
+        EndFrame: 4
+      - BeginFrame: 5
+        EndFrame: 8
+      - BeginFrame: 9
+        EndFrame: 9
+      Width: 128
+      Height: 64
+      Interval: 0.5
+      Pow2: 7
+      FrameRate: 2
+      VertCount: 485
+      posPntRange:
+        x: 0
+        y: 0
+      nmlPntRange:
+        x: 0
+        y: 0
+      tanPntRange:
+        x: 0
+        y: 0
+    Clips:
+    - ClipName: Attack
+      Length: 1.4583334
+    - ClipName: Death
+      Length: 1.9583334
+    - ClipName: Idle
+      Length: 2.4583335
+    - ClipName: Run
+      Length: 0.6666667
+  - ModelName: Horse
+    Skins:
+    - SkinClips:
+      - BeginFrame: 0
+        EndFrame: 3
+      - BeginFrame: 4
+        EndFrame: 27
+      - BeginFrame: 28
+        EndFrame: 31
+      Width: 256
+      Height: 256
+      Interval: 0.16666667
+      Pow2: 8
+      FrameRate: 6
+      VertCount: 1890
+      posPntRange:
+        x: 0
+        y: 0
+      nmlPntRange:
+        x: 0
+        y: 0
+      tanPntRange:
+        x: 0
+        y: 0
+    - SkinClips:
+      - BeginFrame: 0
+        EndFrame: 1
+      - BeginFrame: 2
+        EndFrame: 13
+      - BeginFrame: 14
+        EndFrame: 15
+      Width: 128
+      Height: 128
+      Interval: 0.33333334
+      Pow2: 7
+      FrameRate: 3
+      VertCount: 749
+      posPntRange:
+        x: 0
+        y: 0
+      nmlPntRange:
+        x: 0
+        y: 0
+      tanPntRange:
+        x: 0
+        y: 0
+    - SkinClips:
+      - BeginFrame: 0
+        EndFrame: -1
+      - BeginFrame: 0
+        EndFrame: 3
+      - BeginFrame: 4
+        EndFrame: 3
+      Width: 64
+      Height: 64
+      Interval: 1
+      Pow2: 6
+      FrameRate: 1
+      VertCount: 392
+      posPntRange:
+        x: 0
+        y: 0
+      nmlPntRange:
+        x: 0
+        y: 0
+      tanPntRange:
+        x: 0
+        y: 0
+    Clips:
+    - ClipName: Walk
+      Length: 0.8000001
+    - ClipName: Idle
+      Length: 4
+    - ClipName: Run
+      Length: 0.8000001
+  - ModelName: CharacterRobot
+    Skins:
+    - SkinClips:
+      - BeginFrame: 0
+        EndFrame: 3
+      Width: 128
+      Height: 128
+      Interval: 0.16666667
+      Pow2: 7
+      FrameRate: 6
+      VertCount: 3555
+      posPntRange:
+        x: -0.31941634
+        y: 2.387808
+      nmlPntRange:
+        x: -9.992686
+        y: 9.998723
+      tanPntRange:
+        x: -9.895006
+        y: 9.996314
+    Clips:
+    - ClipName: RifleRun
+      Length: 0.70000005

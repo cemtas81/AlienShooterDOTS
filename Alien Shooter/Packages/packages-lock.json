@@ -1,5 +1,14 @@
 {
   "dependencies": {
+    "com.animationcooker": {
+      "version": "https://gitlab.com/lclemens/animationcooker.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.entities": "1.2.3"
+      },
+      "hash": "0cb684c3ec34521a1e53162918552d940993995f"
+    },
     "com.projectdawn.navigation": {
       "version": "file:com.projectdawn.navigation",
       "depth": 0,

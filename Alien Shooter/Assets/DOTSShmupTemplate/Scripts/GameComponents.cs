@@ -18,7 +18,10 @@ public struct PlayerInput : IComponentData
     public float2 Move;
     public bool Fire;
 }
-
+public struct PlayerFirePoint : IComponentData
+{
+    public float3 Position;
+}
 public struct GameManager : IComponentData { }
 public struct GameScore : IComponentData
 {

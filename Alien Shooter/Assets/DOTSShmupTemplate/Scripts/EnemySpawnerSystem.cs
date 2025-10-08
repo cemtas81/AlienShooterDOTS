@@ -28,6 +28,7 @@ public partial struct EnemySpawnerSystem : ISystem
             return;
         }
 
+        bool didSpawn = false;
         foreach (var (spawner, entity) in SystemAPI.Query<RefRW<EnemySpawner>>().WithEntityAccess())
         {
             spawner.ValueRW.TimeUntilNextSpawn -= deltaTime;
@@ -48,7 +49,7 @@ public partial struct EnemySpawnerSystem : ISystem
                 float3 offset = new float3(math.cos(angle), 0f, math.sin(angle)) * radius; // Y offset'i 0 yap
                 float3 pos = playerPos + offset;
                 // Y pozisyonunu da player'ın Y pozisyonuna göre ayarla
-                pos.y = playerPos.y;
+                //pos.y = playerPos.y;
 
                 // NaN kontrolü ve log
                 if (float.IsNaN(pos.x) || float.IsNaN(pos.y) || float.IsNaN(pos.z))
@@ -62,9 +63,13 @@ public partial struct EnemySpawnerSystem : ISystem
 
                 spawner.ValueRW.TimeUntilNextSpawn = spawner.ValueRO.SpawnInterval;
                 spawner.ValueRW.SpawnCounter++;
+                didSpawn = true;
             }
         }
-        ecb.Playback(state.EntityManager);
+        if (didSpawn)
+        {
+            ecb.Playback(state.EntityManager);
+        }
         ecb.Dispose();
     }
 }
