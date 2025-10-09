@@ -40,7 +40,7 @@ public partial struct EnemyAttackSpawnSystem : ISystem
                     {
                         Position = localTransform.ValueRO.Position,
                         Rotation = quaternion.LookRotationSafe(dir, math.up()),
-                        Scale = .2f
+                        Scale = .5f
                     });
                     state.EntityManager.SetComponentData(bullet, new BulletData
                     {

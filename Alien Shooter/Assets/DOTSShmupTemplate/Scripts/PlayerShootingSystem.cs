@@ -105,7 +105,7 @@ public partial struct PlayerShootingSystem : ISystem
                 {
                     Position = firePoint.Position, // firePoint pozisyonunu kullan
                     Rotation = transform.Rotation,
-                    Scale = 0.2f
+                    Scale = 1f
                 });
             }
         }
