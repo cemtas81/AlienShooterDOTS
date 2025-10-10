@@ -424,7 +424,7 @@ MonoBehaviour:
   MeleeCount: 5
   RangedEnemyPrefab: {fileID: 6437658096193471022, guid: f55e59dab8a47a648860200886ef6089, type: 3}
   RangedCount: 1
-  SpawnInterval: 0.01
+  SpawnInterval: 0.1
   SpawnAreaMin: {x: -50, y: 1}
   SpawnAreaMax: {x: 50, y: 1}
 --- !u!4 &955928473

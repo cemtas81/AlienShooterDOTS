@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: -8507067753740204355}
   - component: {fileID: 4529857797613607535}
   - component: {fileID: 8525408237774177617}
+  - component: {fileID: 5606802819673176946}
   m_Layer: 0
   m_Name: EnemyAgentRanged
   m_TagString: Enemy
@@ -221,3 +222,26 @@ MonoBehaviour:
   DefaultPlaySpeed: 1
   DefaultCommand: 2
   AnimationDb: {fileID: 11400000, guid: 45e108b73616b1c419935830eafc0aef, type: 2}
+--- !u!114 &5606802819673176946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6437658096193471022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00fe6fc1ebf8ff240ad5b12ad70ce1c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ProjectDawn.Navigation.Hybrid::ProjectDawn.Navigation.Hybrid.AgentNavMeshAuthoring
+  AgentTypeId: 0
+  AreaMask: -1
+  AutoRepath: 1
+  m_Grounded: 1
+  m_OptimizePath: 0
+  m_OverrideAreaCosts: 0
+  m_LinkTraversalMode: 0
+  MappingExtent:
+    x: 15
+    y: 15
+    z: 15

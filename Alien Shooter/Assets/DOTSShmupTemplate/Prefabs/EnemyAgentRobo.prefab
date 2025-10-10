@@ -15,10 +15,10 @@ GameObject:
   - component: {fileID: 8355722290748317724}
   - component: {fileID: 8897389893966227765}
   - component: {fileID: 163725077954848323}
-  - component: {fileID: 8941978315179511569}
   - component: {fileID: 447919209554135774}
   - component: {fileID: 7162271454931405130}
   - component: {fileID: 1179513765253385721}
+  - component: {fileID: -3111622705074599763}
   m_Layer: 0
   m_Name: EnemyAgentRobo
   m_TagString: Enemy
@@ -157,21 +157,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAgentAuthoring
   AttackRange: 1
   Damage: 10
---- !u!114 &8941978315179511569
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 194111867853354878}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5412cfcb738c3f74b9a712077b4c4866, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: ProjectDawn.Navigation.Hybrid::ProjectDawn.Navigation.Hybrid.AgentSeparationAuthoring
-  Radius: 3
-  Weight: 1
-  m_Layers: -1
 --- !u!114 &447919209554135774
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -221,3 +206,26 @@ MonoBehaviour:
   DefaultPlaySpeed: 1
   DefaultCommand: 2
   AnimationDb: {fileID: 11400000, guid: 45e108b73616b1c419935830eafc0aef, type: 2}
+--- !u!114 &-3111622705074599763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 194111867853354878}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00fe6fc1ebf8ff240ad5b12ad70ce1c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ProjectDawn.Navigation.Hybrid::ProjectDawn.Navigation.Hybrid.AgentNavMeshAuthoring
+  AgentTypeId: 0
+  AreaMask: -1
+  AutoRepath: 1
+  m_Grounded: 1
+  m_OptimizePath: 0
+  m_OverrideAreaCosts: 0
+  m_LinkTraversalMode: 0
+  MappingExtent:
+    x: 15
+    y: 15
+    z: 15

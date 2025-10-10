@@ -13,8 +13,8 @@ public class EnemySpawnerAuthoring : MonoBehaviour
 
     [Header("General")]
     public float SpawnInterval = 1.5f;
-    public Vector2 SpawnAreaMin = new Vector2(-6, 4);
-    public Vector2 SpawnAreaMax = new Vector2(6, 7);
+    //public Vector2 SpawnAreaMin = new Vector2(-6, 4);
+    //public Vector2 SpawnAreaMax = new Vector2(6, 7);
 }
 
 // Ekstra struct: hangi enemy kaç kere spawn edilecek
