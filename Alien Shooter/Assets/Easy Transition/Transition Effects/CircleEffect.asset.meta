@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 7cb3a7472a36ad5468072f6ca7b2d68f
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 329334
+  packageName: Easy Transition
+  packageVersion: 1.0
+  assetPath: Assets/Easy Transition/Transition Effects/CircleEffect.asset
+  uploadId: 779536

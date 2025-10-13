@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: fb084ff38d5802d419c952b62cb357d8
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 329334
+  packageName: Easy Transition
+  packageVersion: 1.0
+  assetPath: Assets/Easy Transition/Transition Effects/PixelateEffect.asset
+  uploadId: 779536

@@ -1,93 +1,116 @@
-//using AnimCooker;
-//using ProjectDawn.Navigation;
-//using Unity.Burst;
-//using Unity.Collections;
-//using Unity.Entities;
-//using Unity.Mathematics;
-//using UnityEngine;
+using AnimCooker;
+using ProjectDawn.Navigation;
+using Unity.Burst;
+using Unity.Burst.Intrinsics;
+using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
+using Unity.Entities;
+using Unity.Jobs;
 
-//[BurstCompile]
-//[UpdateInGroup(typeof(SimulationSystemGroup))] // Komutlarý simulation'da yaz; playback presentation'da okur
-//[UpdateAfter(typeof(EnemyAgentMovementSystem))] // AgentBody.IsStopped güncellendikten sonra çalýþ
+[BurstCompile]
+[UpdateInGroup(typeof(SimulationSystemGroup))]
+[UpdateAfter(typeof(EnemyAttackSystem))]
+public partial struct AnimationPlaySystem : ISystem
+{
+    private ComponentTypeHandle<AnimationCmdData> _cmdTypeHandle;
+    private ComponentTypeHandle<AnimationSpeedData> _speedTypeHandle;
+    private ComponentTypeHandle<AnimationStateData> _stateTypeHandle;
+    private ComponentTypeHandle<AgentBody> _agentTypeHandle;
+    private BufferTypeHandle<AttackFlag> _attackBufferHandle;
+    private EntityQuery _enemyQuery;
 
+    [BurstCompile]
+    public void OnCreate(ref SystemState state)
+    {
+        // Component type handle'larý oluþtur
+        _cmdTypeHandle = state.GetComponentTypeHandle<AnimationCmdData>();
+        _speedTypeHandle = state.GetComponentTypeHandle<AnimationSpeedData>();
+        _stateTypeHandle = state.GetComponentTypeHandle<AnimationStateData>(true);
+        _agentTypeHandle = state.GetComponentTypeHandle<AgentBody>(true);
+        _attackBufferHandle = state.GetBufferTypeHandle<AttackFlag>(true);
 
-//public partial struct AnimationPlaySystem : ISystem
-//{
-//    void OnCreate(ref SystemState state)
-//    {
-//        state.RequireForUpdate<AnimDbRefData>(); // en az bir DB bekle
-//    }
+        // EntityQuery'yi system state üzerinden oluþtur
+        _enemyQuery = state.GetEntityQuery(new EntityQueryBuilder(Allocator.Temp)
+            .WithAll<AnimationCmdData, AnimationSpeedData, AnimationStateData, EnemyTag, AgentBody>());
 
-//    [BurstCompile]
-//    void OnUpdate(ref SystemState state)
-//    {
-//        // Sahnedeki ilk AnimDbRefData'yý güvenle al
-//        AnimDbRefData db = default;
-//        int foundCount = 0;
-//        foreach (var dbRef in SystemAPI.Query<RefRO<AnimDbRefData>>())
-//        {
-//            if (foundCount == 0) db = dbRef.ValueRO;
-//            foundCount++;
-//            if (foundCount > 1) break;
-//        }
+        state.RequireForUpdate(_enemyQuery);
+        state.RequireForUpdate<AnimDbRefData>();
+    }
 
-//        if (foundCount == 0)
-//            return;
+    [BurstCompile]
+    public void OnDestroy(ref SystemState state)
+    {
+        // EntityQuery'yi manuel olarak dispose etmeye gerek yok
+        // Sistem destroy edildiðinde otomatik olarak temizlenecek
+    }
 
-//        if (foundCount > 1)
-//            Debug.LogWarning($"Birden fazla AnimDbRefData bulundu ({foundCount}). Ýlk bulunana göre davranýlýyor.");
+    [BurstCompile]
+    private struct UpdateAnimationJob : IJobChunk
+    {
+        [NativeDisableContainerSafetyRestriction]
+        public ComponentTypeHandle<AnimationCmdData> CmdTypeHandle;
+        [NativeDisableContainerSafetyRestriction]
+        public ComponentTypeHandle<AnimationSpeedData> SpeedTypeHandle;
+        [ReadOnly] public ComponentTypeHandle<AnimationStateData> StateTypeHandle;
+        [ReadOnly] public ComponentTypeHandle<AgentBody> AgentTypeHandle;
+        [ReadOnly] public BufferTypeHandle<AttackFlag> AttackBufferHandle;
 
-//        // Anahtar (main thread)
-//        var moveKey = new FixedString128Bytes("RifleRun");
-//        /*const float moveThreshold = 0.05f;*/ // artýk velocity eþiði kullanýlmýyor ama býrakýlabilir
+        public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
+        {
+            var cmds = chunk.GetNativeArray(ref CmdTypeHandle);
+            var speeds = chunk.GetNativeArray(ref SpeedTypeHandle);
+            var agents = chunk.GetNativeArray(ref AgentTypeHandle);
+            var attackBuffers = chunk.GetBufferAccessor(ref AttackBufferHandle);
 
-//        // Sorgu: EnemyTag ve gerekli animasyon bileþenlerine sahip entitiler
-//        foreach (var (cmdRef, speedRef, stateRef, bodyRef) in
-//            SystemAPI.Query<RefRW<AnimationCmdData>, RefRW<AnimationSpeedData>, RefRO<AnimationStateData>, RefRO<AgentBody>>()
-//                     .WithAll<EnemyTag>())
-//        {
-//            var animState = stateRef.ValueRO;
-//            var body = bodyRef.ValueRO;
+            int chunkCount = chunk.Count;
 
-//            // Basit mantýk: agent hedefte deðilse (IsStopped == false) hareket animasyonunu oynat
-//            float speedSq = math.lengthsq(body.Velocity);
-//            bool moving = speedSq > 0.01f && !body.IsStopped; // gerekirse !body.IsStopped'ý kaldýr
+            for (int i = 0; i < chunkCount; i++)
+            {
+                var attackBuffer = attackBuffers[i];
+                var agent = agents[i];
 
-//            if (moving)
-//            {
-//                // play speed basitçe 1 (ya da ihtiyaç varsa body.Velocity kullanarak ayarla)
-//                speedRef.ValueRW.PlaySpeed = 1f;
+                // Branch prediction optimizasyonu
+                short newClipIndex = attackBuffer.Length > 0 ? (short)1 :
+                                   (!agent.IsStopped ? (short)0 : (short)-1);
 
-//                short clipIndex = -1;
-//                ref var model = ref db.Ref.Value.Models[animState.ModelIndex];
+                if (newClipIndex >= 0 && cmds[i].ClipIndex != newClipIndex)
+                {
+                    var cmd = cmds[i];
+                    cmd.ClipIndex = newClipIndex;
+                    cmd.Cmd = AnimationCmd.SetPlayForever;
+                    cmd.Speed = 1f;
+                    cmds[i] = cmd;
 
-//                clipIndex = model.FindClipThatContains(moveKey);
+                    var speed = speeds[i];
+                    speed.PlaySpeed = 1f;
+                    speeds[i] = speed;
+                }
+            }
+        }
+    }
 
-//                if (clipIndex >= 0)
-//                {
-//                    if (cmdRef.ValueRW.ClipIndex != clipIndex || cmdRef.ValueRW.Cmd != AnimationCmd.SetPlayForever)
-//                    {
-//                        cmdRef.ValueRW.ClipIndex = clipIndex;
-//                        cmdRef.ValueRW.Cmd = AnimationCmd.SetPlayForever;
-//                        cmdRef.ValueRW.Speed = 1f;
-//                    }
-//                }
-//                else
-//                {
-//                    // move klibi yoksa en azýndan play komutunu tetikle
-//                    cmdRef.ValueRW.Cmd = AnimationCmd.SetPlayForever;
-//                }
-//            }
-//            else
-//            {
-//                // Agent durduysa baker tarafýndan ayarlanan forever klibe dön
-//                if (animState.ForeverClipIndex >= 0 && cmdRef.ValueRW.ClipIndex != animState.ForeverClipIndex)
-//                {
-//                    cmdRef.ValueRW.ClipIndex = animState.ForeverClipIndex;
-//                    cmdRef.ValueRW.Cmd = AnimationCmd.SetPlayForever;
-//                    cmdRef.ValueRW.Speed = 1f;
-//                }
-//            }
-//        }
-//    }
-//}
+    [BurstCompile]
+    public void OnUpdate(ref SystemState state)
+    {
+        if (!SystemAPI.TryGetSingleton<AnimDbRefData>(out _))
+            return;
+
+        // Component type handle'larý güncelle
+        _cmdTypeHandle.Update(ref state);
+        _speedTypeHandle.Update(ref state);
+        _stateTypeHandle.Update(ref state);
+        _agentTypeHandle.Update(ref state);
+        _attackBufferHandle.Update(ref state);
+
+        var job = new UpdateAnimationJob
+        {
+            CmdTypeHandle = _cmdTypeHandle,
+            SpeedTypeHandle = _speedTypeHandle,
+            StateTypeHandle = _stateTypeHandle,
+            AgentTypeHandle = _agentTypeHandle,
+            AttackBufferHandle = _attackBufferHandle
+        };
+
+        state.Dependency = job.ScheduleParallel(_enemyQuery, state.Dependency);
+    }
+}

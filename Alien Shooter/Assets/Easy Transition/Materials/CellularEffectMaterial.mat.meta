@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 641897f7dcd3e514c9f448e946460d60
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 329334
+  packageName: Easy Transition
+  packageVersion: 1.0
+  assetPath: Assets/Easy Transition/Materials/CellularEffectMaterial.mat
+  uploadId: 779536

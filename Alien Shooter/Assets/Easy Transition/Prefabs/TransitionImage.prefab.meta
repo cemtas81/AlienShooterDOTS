@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 4414e5d3286e8584ca7d55ae716d253e
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 329334
+  packageName: Easy Transition
+  packageVersion: 1.0
+  assetPath: Assets/Easy Transition/Prefabs/TransitionImage.prefab
+  uploadId: 779536

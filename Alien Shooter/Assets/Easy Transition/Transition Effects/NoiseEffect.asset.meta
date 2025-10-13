@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 800cf4f007f3e6a4d85d89ee6e2d175c
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 329334
+  packageName: Easy Transition
+  packageVersion: 1.0
+  assetPath: Assets/Easy Transition/Transition Effects/NoiseEffect.asset
+  uploadId: 779536

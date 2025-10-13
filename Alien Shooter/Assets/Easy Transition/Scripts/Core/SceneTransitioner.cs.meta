@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 77b525215f79aa7468598d85400f45f5
+AssetOrigin:
+  serializedVersion: 1
+  productId: 329334
+  packageName: Easy Transition
+  packageVersion: 1.0
+  assetPath: Assets/Easy Transition/Scripts/Core/SceneTransitioner.cs
+  uploadId: 779536

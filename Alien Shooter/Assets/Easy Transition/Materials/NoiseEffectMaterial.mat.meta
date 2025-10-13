@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d0784f54d8d331d4987ee1aa0212933e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 329334
+  packageName: Easy Transition
+  packageVersion: 1.0
+  assetPath: Assets/Easy Transition/Materials/NoiseEffectMaterial.mat
+  uploadId: 779536

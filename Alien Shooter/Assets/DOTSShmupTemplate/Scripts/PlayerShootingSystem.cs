@@ -104,7 +104,7 @@ public partial struct PlayerShootingSystem : ISystem
                 ECB.SetComponent(0, bullet, new LocalTransform
                 {
                     Position = firePoint.Position, // firePoint pozisyonunu kullan
-                    Rotation = transform.Rotation,
+                    Rotation = firePoint.Rotation,
                     Scale = 1f
                 });
             }

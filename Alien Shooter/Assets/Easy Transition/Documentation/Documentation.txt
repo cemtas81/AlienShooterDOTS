@@ -1,0 +1,98 @@
+# Easy Transition
+
+### User Manual & Documentation
+
+**Version 1.0**
+**Created by Ahmed Benlakhdhar**
+
+---
+
+### **Table of Contents**
+1.  Introduction
+2.  Quick Start Guide
+3.  The ScriptableObject Workflow
+4.  Core Components
+5.  Configuration
+6.  Creating Custom Effects
+7.  FAQ & Support
+
+---
+
+### **1. Introduction**
+
+Thank you for choosing Easy Transition! This asset is a powerful and flexible system for creating professional, animated scene transitions in your Unity project, built on a robust ScriptableObject architecture.
+
+**Key Features:**
+*   **Asynchronous Loading:** Prevents game freezes and stutters between scenes.
+*   **ScriptableObject Based:** Create and configure endless transition variations without writing new code.
+*   **Easily Extensible:** Create your own custom effects by inheriting from the `TransitionEffect` class.
+*   **Full C# Source Code Included**
+*   **6 Effect Types Included:** Fade, Wipe, Circle, Cellular, Noise, and Pixelate.
+
+---
+
+### **2. Quick Start Guide**
+
+1.  **Add the Manager:**
+    Drag the `SceneTransitioner` prefab from `Easy Transition/Prefabs/` into your *first* scene (e.g., your Main Menu).
+
+2.  **Create an Effect:**
+    In your Project window, right-click and go to `Create -> Easy Transition` to create a new `Fade Effect`, `Wipe Effect`, etc. Select this new asset and configure its settings in the Inspector.
+
+3.  **Call from Script:**
+    From any script, call the transition using the effect you just created:
+    `SceneTransitioner.Instance.LoadScene("YourSceneName", yourTransitionEffect);`
+
+**Done!** See the Demo Scene in `Assets/Easy Transition/Demo/Scenes/` for live examples.
+
+---
+
+### **3. The ScriptableObject Workflow**
+
+The core of this asset is the `TransitionEffect` ScriptableObject. Instead of having one complex manager, you create small, reusable "Effect" assets in your project. This allows you to create many different transition styles and variations easily without coding.
+
+For example, you can create a "FastWipe.asset" and a "SlowWipe.asset" from the same `WipeEffect` script, just with different duration values.
+
+---
+
+### **4. Core Components**
+
+*   **`SceneTransitioner` Prefab:** The "brain" of the system. A singleton that persists across scenes and runs the transitions. You only need one in your very first scene.
+
+*   **`TransitionEffect` Scripts:** The ScriptableObject assets that define what a transition looks like (e.g., `FadeEffect`, `CircleEffect`).
+
+*   **`DemoSceneController` Script:** An example script in the demo that shows the correct way to call the `LoadScene()` method.
+
+---
+
+### **5. Configuration**
+
+You can control which transition is used in two ways:
+
+**1. Global Default:**
+Set the **"Default Transition"** field on the `SceneTransitioner` prefab. If you call `LoadScene()` without specifying an effect, this one will be used.
+
+**2. Per-Transition Override:**
+Pass a specific `TransitionEffect` asset directly into the `LoadScene()` method. This is the recommended approach for most transitions.
+
+---
+
+### **6. Creating Custom Effects**
+
+You can easily create your own effects:
+1. Create a new C# script that inherits from `TransitionEffect`.
+2. Implement the `AnimateOut` and `AnimateIn` methods.
+3. Add a `[CreateAssetMenu]` attribute to your new class.
+
+You can look at `FadeEffect.cs` or `WipeEffect.cs` for a clear example.
+
+---
+
+### **7. FAQ & Support**
+
+**Q: My transition is not appearing on top of my UI!**
+A: The `SceneTransitioner` automatically creates its own Canvas with a very high "Sort Order" (999). If you are using multiple Canvases with custom Sort Orders, ensure your game's Canvases have a Sort Order lower than 999.
+
+**Contact for support or feature requests:**
+*   LinkedIn: https://www.linkedin.com/in/ahmedbenlakhdhar/
+*   ArtStation: https://www.artstation.com/ahmedbenlakhdhar

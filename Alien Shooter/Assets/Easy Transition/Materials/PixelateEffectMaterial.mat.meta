@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: fae9dcb3e157d5246a054e84b0d1f747
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 329334
+  packageName: Easy Transition
+  packageVersion: 1.0
+  assetPath: Assets/Easy Transition/Materials/PixelateEffectMaterial.mat
+  uploadId: 779536

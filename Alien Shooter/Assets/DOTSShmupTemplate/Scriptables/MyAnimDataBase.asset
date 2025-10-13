@@ -17,45 +17,53 @@ MonoBehaviour:
     Skins:
     - SkinClips:
       - BeginFrame: 0
-        EndFrame: 3
-      Width: 128
-      Height: 128
-      Interval: 0.16666667
-      Pow2: 7
-      FrameRate: 6
+        EndFrame: 5
+      - BeginFrame: 6
+        EndFrame: 32
+      Width: 512
+      Height: 256
+      Interval: 0.11111111
+      Pow2: 9
+      FrameRate: 9
       VertCount: 3555
       posPntRange:
-        x: -0.54810256
-        y: 1.724492
+        x: -0.62456304
+        y: 1.8144683
       nmlPntRange:
-        x: -9.99878
-        y: 9.998491
+        x: -9.998862
+        y: 9.999848
       tanPntRange:
-        x: -9.887307
+        x: -9.973651
         y: 9.990648
     Clips:
     - ClipName: RifleRun
       Length: 0.73333335
+    - ClipName: Aim
+      Length: 3.0666668
   - ModelName: CharacterAlien
     Skins:
     - SkinClips:
       - BeginFrame: 0
-        EndFrame: 1
-      Width: 128
-      Height: 128
-      Interval: 0.25
-      Pow2: 7
-      FrameRate: 4
+        EndFrame: 4
+      - BeginFrame: 5
+        EndFrame: 25
+      Width: 512
+      Height: 256
+      Interval: 0.14285715
+      Pow2: 9
+      FrameRate: 7
       VertCount: 4752
       posPntRange:
-        x: -0.6122961
-        y: 1.6994789
+        x: -0.5624315
+        y: 1.8306978
       nmlPntRange:
-        x: -0.99920464
-        y: 0.9998956
+        x: -0.9999149
+        y: 0.99979556
       tanPntRange:
         x: 3.4028235e+38
         y: -3.4028235e+38
     Clips:
-    - ClipName: RunInPlace
+    - ClipName: RifleRun
       Length: 0.73333335
+    - ClipName: Aim
+      Length: 3.0666668

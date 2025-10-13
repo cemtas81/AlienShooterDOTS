@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d1366fece584d4548986e1f1067ef4a6
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 329334
+  packageName: Easy Transition
+  packageVersion: 1.0
+  assetPath: Assets/Easy Transition/Materials/CircleEffectMaterial.mat
+  uploadId: 779536

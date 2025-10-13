@@ -21,6 +21,7 @@ public struct PlayerInput : IComponentData
 public struct PlayerFirePoint : IComponentData
 {
     public float3 Position;
+    public quaternion Rotation;
 }
 public struct GameManager : IComponentData { }
 public struct GameScore : IComponentData

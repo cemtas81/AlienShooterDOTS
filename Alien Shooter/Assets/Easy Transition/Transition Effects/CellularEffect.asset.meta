@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 97fbd29cb88501f418dba224df37fe8b
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 329334
+  packageName: Easy Transition
+  packageVersion: 1.0
+  assetPath: Assets/Easy Transition/Transition Effects/CellularEffect.asset
+  uploadId: 779536

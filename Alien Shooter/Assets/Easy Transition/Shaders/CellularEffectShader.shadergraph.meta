@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: d5cd0b24f8f47d2438e1d8490d9c95ed
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 625f186215c104763be7675aa2d941aa, type: 3}
+AssetOrigin:
+  serializedVersion: 1
+  productId: 329334
+  packageName: Easy Transition
+  packageVersion: 1.0
+  assetPath: Assets/Easy Transition/Shaders/CellularEffectShader.shadergraph
+  uploadId: 779536

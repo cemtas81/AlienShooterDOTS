@@ -8,11 +8,9 @@ public partial struct EnemyAttackSpawnSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
-        // Prefab referanslarını singletondan çek
         var bulletPrefab = SystemAPI.GetSingleton<EnemyBulletPrefabReference>().Prefab;
         var meleePrefab = SystemAPI.GetSingleton<EnemyMeleePrefabReference>().Prefab;
 
-        // Player pozisyonunu çek (gerekiyorsa)
         var playerPos = float3.zero;
         foreach (var (playerTransform, _) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<PlayerTag>>())
         {
@@ -20,33 +18,42 @@ public partial struct EnemyAttackSpawnSystem : ISystem
             break;
         }
 
-        foreach (var (attackFlags, localTransform, attackRange, entity) in
-            SystemAPI.Query<DynamicBuffer<AttackFlag>, RefRO<LocalTransform>, RefRO<AttackRange>>().WithEntityAccess())
+        foreach (var (attackFlags, transform, bulletData, attackRange, entity) in
+            SystemAPI.Query<DynamicBuffer<AttackFlag>,
+                          RefRO<LocalTransform>,
+                          RefRO<BulletData>,
+                          RefRO<AttackRange>>()
+                    .WithEntityAccess())
         {
             bool didAttack = false;
 
-            // Bütün attack flag'leri işle
             for (int i = 0; i < attackFlags.Length; i++)
             {
                 var attackFlag = attackFlags[i];
                 if (attackFlag.AttackType == 1)
                 {
-                    // Ranged: Bullet spawn
                     var bullet = state.EntityManager.Instantiate(bulletPrefab);
 
-                    var dir = math.normalize(playerPos - localTransform.ValueRO.Position);
+                    // Enemy'nin dünya pozisyonuna göre firePos'u hesapla
+                    float3 worldFirePos = transform.ValueRO.Position + bulletData.ValueRO.firePos;
+
+                    // Ateş yönünü hesapla (firePos'dan oyuncuya doğru)
+                    float3 dir = math.normalize(new float3(playerPos.x,playerPos.y+1,playerPos.z) - worldFirePos);
 
                     state.EntityManager.SetComponentData(bullet, new LocalTransform
                     {
-                        Position = localTransform.ValueRO.Position,
+                        Position = worldFirePos, // Mermi firePos'dan çıkacak
                         Rotation = quaternion.LookRotationSafe(dir, math.up()),
                         Scale = .5f
                     });
+
                     state.EntityManager.SetComponentData(bullet, new BulletData
                     {
+                        
                         Direction = dir,
                         Speed = 10f,
-                        LifeTime = 3f
+                        LifeTime = 3f,
+                        firePos = worldFirePos
                     });
                 }
                 else if (attackFlag.AttackType == 2)
@@ -55,14 +62,14 @@ public partial struct EnemyAttackSpawnSystem : ISystem
                     var melee = state.EntityManager.Instantiate(meleePrefab);
 
                     // Entity'nin yönünü bul
-                    var forward = math.forward(localTransform.ValueRO.Rotation);
+                    var forward = math.forward(transform.ValueRO.Rotation);
                     // 1 birim ön pozisyonu hesapla
-                    var spawnPos = localTransform.ValueRO.Position + forward * 1f;
+                    var spawnPos = transform.ValueRO.Position + forward * 1f;
 
                     state.EntityManager.SetComponentData(melee, new LocalTransform
                     {
                         Position = spawnPos,
-                        Rotation = localTransform.ValueRO.Rotation,
+                        Rotation = transform.ValueRO.Rotation,
                         Scale = .5f
                     });
                     state.EntityManager.SetComponentData(melee, new MeleeAttackData

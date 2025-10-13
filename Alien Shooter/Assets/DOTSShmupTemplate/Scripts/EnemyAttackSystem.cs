@@ -48,14 +48,27 @@ public partial struct EnemyAttackDamageToPlayerSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
-        GameObject playerGO = GameObject.FindWithTag("Player");
-        if (playerGO == null) return;
-        if (!playerGO.TryGetComponent<PlayerHealth>(out var playerHealth)) return;
+        // Player pozisyonu ve health'i için query
+        float3 playerPos = float3.zero;
+        Entity playerEntity = Entity.Null;
+        bool playerFound = false;
 
-        float3 playerPos = playerGO.transform.position;
-        const float hitRadiusSq = 0.2f * 0.2f;
+        // Player'ı EntityQuery ile bul
+        foreach (var (transform, health, entity) in
+            SystemAPI.Query<RefRO<LocalTransform>, RefRW<HealthComponent>>()
+                    .WithAll<PlayerTag>()
+                    .WithEntityAccess())
+        {
+            playerPos = transform.ValueRO.Position;
+            playerEntity = entity;
+            playerFound = true;
+            break; // Sadece bir player olduğunu varsayıyoruz
+        }
+
+        if (!playerFound) return;
 
         var ecb = new EntityCommandBuffer(Allocator.Temp);
+        const float hitRadiusSq = 0.2f * 0.2f;
 
         // Mermi
         foreach (var (tr, dmg, ent) in SystemAPI
@@ -65,7 +78,10 @@ public partial struct EnemyAttackDamageToPlayerSystem : ISystem
         {
             if (math.distancesq(playerPos, tr.ValueRO.Position) <= hitRadiusSq)
             {
-                playerHealth.TakeDamage(dmg.ValueRO.Value);
+                // Damage'i direkt olarak HealthComponent üzerinden uygula
+                var health = state.EntityManager.GetComponentData<HealthComponent>(playerEntity);
+                health.Value -= dmg.ValueRO.Value;
+                state.EntityManager.SetComponentData(playerEntity, health);
                 ecb.DestroyEntity(ent);
             }
         }
@@ -78,7 +94,10 @@ public partial struct EnemyAttackDamageToPlayerSystem : ISystem
         {
             if (math.distancesq(playerPos, tr.ValueRO.Position) <= hitRadiusSq)
             {
-                playerHealth.TakeDamage(dmg.ValueRO.Value);
+                // Damage'i direkt olarak HealthComponent üzerinden uygula
+                var health = state.EntityManager.GetComponentData<HealthComponent>(playerEntity);
+                health.Value -= dmg.ValueRO.Value;
+                state.EntityManager.SetComponentData(playerEntity, health);
                 ecb.DestroyEntity(ent);
             }
         }

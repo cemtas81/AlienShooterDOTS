@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f9ea10a09163ba14194d6ce864d1c4cf
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 329334
+  packageName: Easy Transition
+  packageVersion: 1.0
+  assetPath: Assets/Easy Transition/Transition Effects/WipeEffect.asset
+  uploadId: 779536

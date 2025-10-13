@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 9c3b3e3b3325af445a261fe0e2c9524a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 329334
+  packageName: Easy Transition
+  packageVersion: 1.0
+  assetPath: Assets/Easy Transition/Materials/FadeEffectMaterial.mat
+  uploadId: 779536
