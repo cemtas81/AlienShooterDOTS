@@ -16,6 +16,7 @@ public partial struct AnimationPlaySystem : ISystem
     private ComponentTypeHandle<AnimationSpeedData> _speedTypeHandle;
     private ComponentTypeHandle<AnimationStateData> _stateTypeHandle;
     private ComponentTypeHandle<AgentBody> _agentTypeHandle;
+    private ComponentTypeHandle<EnemyDying> _dyingTypeHandle;
     private BufferTypeHandle<AttackFlag> _attackBufferHandle;
     private EntityQuery _enemyQuery;
 
@@ -27,21 +28,15 @@ public partial struct AnimationPlaySystem : ISystem
         _speedTypeHandle = state.GetComponentTypeHandle<AnimationSpeedData>();
         _stateTypeHandle = state.GetComponentTypeHandle<AnimationStateData>(true);
         _agentTypeHandle = state.GetComponentTypeHandle<AgentBody>(true);
+        _dyingTypeHandle = state.GetComponentTypeHandle<EnemyDying>(true);
         _attackBufferHandle = state.GetBufferTypeHandle<AttackFlag>(true);
 
         // EntityQuery'yi system state üzerinden oluþtur
         _enemyQuery = state.GetEntityQuery(new EntityQueryBuilder(Allocator.Temp)
-            .WithAll<AnimationCmdData, AnimationSpeedData, AnimationStateData, EnemyTag, AgentBody>());
+            .WithAll<AnimationCmdData, AnimationSpeedData, AnimationStateData, EnemyTag>());
 
         state.RequireForUpdate(_enemyQuery);
         state.RequireForUpdate<AnimDbRefData>();
-    }
-
-    [BurstCompile]
-    public void OnDestroy(ref SystemState state)
-    {
-        // EntityQuery'yi manuel olarak dispose etmeye gerek yok
-        // Sistem destroy edildiðinde otomatik olarak temizlenecek
     }
 
     [BurstCompile]
@@ -53,25 +48,46 @@ public partial struct AnimationPlaySystem : ISystem
         public ComponentTypeHandle<AnimationSpeedData> SpeedTypeHandle;
         [ReadOnly] public ComponentTypeHandle<AnimationStateData> StateTypeHandle;
         [ReadOnly] public ComponentTypeHandle<AgentBody> AgentTypeHandle;
+        [ReadOnly] public ComponentTypeHandle<EnemyDying> DyingTypeHandle;
         [ReadOnly] public BufferTypeHandle<AttackFlag> AttackBufferHandle;
 
         public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
         {
             var cmds = chunk.GetNativeArray(ref CmdTypeHandle);
             var speeds = chunk.GetNativeArray(ref SpeedTypeHandle);
-            var agents = chunk.GetNativeArray(ref AgentTypeHandle);
-            var attackBuffers = chunk.GetBufferAccessor(ref AttackBufferHandle);
+            
+            // optional components
+            var hasAgent = chunk.Has(ref AgentTypeHandle);
+            var hasDying = chunk.Has(ref DyingTypeHandle);
+            var hasAttack = chunk.Has(ref AttackBufferHandle);
+            
+            var agents = hasAgent ? chunk.GetNativeArray(ref AgentTypeHandle) : default;
+            var dyingComponents = hasDying ? chunk.GetNativeArray(ref DyingTypeHandle) : default;
+            var attackBuffers = hasAttack ? chunk.GetBufferAccessor(ref AttackBufferHandle) : default;
 
             int chunkCount = chunk.Count;
 
             for (int i = 0; i < chunkCount; i++)
             {
-                var attackBuffer = attackBuffers[i];
-                var agent = agents[i];
-
-                // Branch prediction optimizasyonu
-                short newClipIndex = attackBuffer.Length > 0 ? (short)1 :
-                                   (!agent.IsStopped ? (short)0 : (short)-1);
+                short newClipIndex;
+                
+                // Önce dying durumunu kontrol et
+                if (hasDying && dyingComponents.Length > i)
+                {
+                    newClipIndex = 2; // Death animation clip index
+                }
+                else if (hasAttack && attackBuffers.Length > i && attackBuffers[i].Length > 0)
+                {
+                    newClipIndex = 1; // Attack animation
+                }
+                else if (hasAgent && agents.Length > i && !agents[i].IsStopped)
+                {
+                    newClipIndex = 0; // Walk animation
+                }
+                else
+                {
+                    newClipIndex = -1; // Idle or no change
+                }
 
                 if (newClipIndex >= 0 && cmds[i].ClipIndex != newClipIndex)
                 {
@@ -100,6 +116,7 @@ public partial struct AnimationPlaySystem : ISystem
         _speedTypeHandle.Update(ref state);
         _stateTypeHandle.Update(ref state);
         _agentTypeHandle.Update(ref state);
+        _dyingTypeHandle.Update(ref state);
         _attackBufferHandle.Update(ref state);
 
         var job = new UpdateAnimationJob
@@ -108,6 +125,7 @@ public partial struct AnimationPlaySystem : ISystem
             SpeedTypeHandle = _speedTypeHandle,
             StateTypeHandle = _stateTypeHandle,
             AgentTypeHandle = _agentTypeHandle,
+            DyingTypeHandle = _dyingTypeHandle,
             AttackBufferHandle = _attackBufferHandle
         };
 

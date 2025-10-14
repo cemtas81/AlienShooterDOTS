@@ -28,3 +28,11 @@ public struct GameScore : IComponentData
 {
     public int Value;
 }
+
+/// <summary>
+/// enemy death state component
+/// </summary>
+public struct EnemyDying : IComponentData
+{
+    public float DeathTimer; // death animation timer
+}

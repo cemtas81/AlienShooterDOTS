@@ -1,3 +1,4 @@
+using ProjectDawn.Navigation;
 using System;
 using Unity.Burst;
 using Unity.Collections;
@@ -12,7 +13,7 @@ public partial struct EnemyDamageSystem : ISystem
     {
         var ecb = new EntityCommandBuffer(Allocator.TempJob);
 
-        // Her mermi için, yakın düşmanı bul ve hasar uygula
+        // Her mermi i�in, yak�n d��man� bul ve hasar uygula
         foreach (var (bulletTransform, bulletDamage, bulletEntity) in
                  SystemAPI.Query<RefRO<LocalTransform>, RefRO<DamageComponent>>()
                           .WithAll<BulletTag>()
@@ -21,31 +22,34 @@ public partial struct EnemyDamageSystem : ISystem
             float3 bulletPos = bulletTransform.ValueRO.Position;
             bool hit = false;
 
-            foreach (var (enemyTransform, health, enemyEntity) in
-                     SystemAPI.Query<RefRO<LocalTransform>, RefRW<HealthComponent>>()
+            foreach (var (enemyTransform, health,agentBody, enemyEntity) in
+                     SystemAPI.Query<RefRO<LocalTransform>, RefRW<HealthComponent>,RefRW<AgentBody>>()
                               .WithAll<EnemyTag>()
+                              .WithNone<EnemyDying>() // Zaten �lmekte olan enemy'leri atla
                               .WithEntityAccess())
             {
                 float3 enemyPos = enemyTransform.ValueRO.Position;
-                
+
                 // Sadece X ve Z eksenlerindeki mesafeyi kontrol et
-                float2 bulletPosXZ = new float2(bulletPos.x, bulletPos.z);
-                float2 enemyPosXZ = new float2(enemyPos.x, enemyPos.z);
+                float2 bulletPosXZ = new (bulletPos.x, bulletPos.z);
+                float2 enemyPosXZ = new (enemyPos.x, enemyPos.z);
                 float horizontalDistSq = math.distancesq(bulletPosXZ, enemyPosXZ);
 
-                // Çarpışma mesafesini arttırdım, daha kolay vuruş sağlamak için
-                if (horizontalDistSq < 1f) // 1f = 1 birim çarpışma yarıçapı, ihtiyaca göre ayarlanabilir
+                if (horizontalDistSq < .2f)
                 {
                     health.ValueRW.Value -= bulletDamage.ValueRO.Value;
                     ecb.DestroyEntity(bulletEntity);
-                    
+
                     if (health.ValueRW.Value <= 0)
                     {
-                        ecb.DestroyEntity(enemyEntity);
+                        // AgentBody component'ini tamamen kald�r
+                        ecb.RemoveComponent<AgentBody>(enemyEntity);
+                        // Enemy'yi direkt destroy etme, �l�m durumuna al
+                        ecb.AddComponent(enemyEntity, new EnemyDying { DeathTimer = 3.0f }); // 1 saniye �l�m animasyonu
                     }
-                    
+
                     hit = true;
-                    break; // Bir mermi sadece bir düşmana vurabilir
+                    break;
                 }
             }
         }

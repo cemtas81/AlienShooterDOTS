@@ -17,29 +17,33 @@ MonoBehaviour:
     Skins:
     - SkinClips:
       - BeginFrame: 0
-        EndFrame: 5
-      - BeginFrame: 6
-        EndFrame: 32
+        EndFrame: 6
+      - BeginFrame: 7
+        EndFrame: 36
+      - BeginFrame: 37
+        EndFrame: 67
       Width: 512
-      Height: 256
-      Interval: 0.11111111
+      Height: 512
+      Interval: 0.1
       Pow2: 9
-      FrameRate: 9
+      FrameRate: 10
       VertCount: 3555
       posPntRange:
-        x: -0.62456304
-        y: 1.8144683
+        x: -2.1734676
+        y: 1.8821824
       nmlPntRange:
-        x: -9.998862
-        y: 9.999848
+        x: -9.999909
+        y: 9.999968
       tanPntRange:
-        x: -9.973651
-        y: 9.990648
+        x: -9.977747
+        y: 9.997418
     Clips:
     - ClipName: RifleRun
       Length: 0.73333335
     - ClipName: Aim
       Length: 3.0666668
+    - ClipName: Death
+      Length: 3.1000001
   - ModelName: CharacterAlien
     Skins:
     - SkinClips:
@@ -47,18 +51,20 @@ MonoBehaviour:
         EndFrame: 4
       - BeginFrame: 5
         EndFrame: 25
+      - BeginFrame: 26
+        EndFrame: 46
       Width: 512
-      Height: 256
+      Height: 512
       Interval: 0.14285715
       Pow2: 9
       FrameRate: 7
       VertCount: 4752
       posPntRange:
-        x: -0.5624315
-        y: 1.8306978
+        x: -2.1763806
+        y: 1.9620551
       nmlPntRange:
-        x: -0.9999149
-        y: 0.99979556
+        x: -0.99992204
+        y: 0.99995
       tanPntRange:
         x: 3.4028235e+38
         y: -3.4028235e+38
@@ -67,3 +73,5 @@ MonoBehaviour:
       Length: 0.73333335
     - ClipName: Aim
       Length: 3.0666668
+    - ClipName: Death
+      Length: 3.1000001

@@ -1893,14 +1893,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7616231853773533071, guid: 123bafb77103e1344bf0d42c334ea526, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7616231853773533071, guid: 123bafb77103e1344bf0d42c334ea526, type: 3}
-      propertyPath: m_IsTrigger
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7919605312171467201, guid: 123bafb77103e1344bf0d42c334ea526, type: 3}
       propertyPath: autoAim
       value: 0
@@ -1909,10 +1901,6 @@ PrefabInstance:
       propertyPath: AimFormat
       value: 
       objectReference: {fileID: 1813872482}
-    - target: {fileID: 8355190158211482376, guid: 123bafb77103e1344bf0d42c334ea526, type: 3}
-      propertyPath: m_IsKinematic
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 5002386805514645604, guid: 123bafb77103e1344bf0d42c334ea526, type: 3}
