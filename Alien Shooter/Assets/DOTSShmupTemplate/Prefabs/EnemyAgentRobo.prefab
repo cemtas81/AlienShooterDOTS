@@ -110,7 +110,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb0da925383b51448863b19e834eaf4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthAuthoring
-  Health: 1
+  Health: 2
 --- !u!114 &8355722290748317724
 MonoBehaviour:
   m_ObjectHideFlags: 0

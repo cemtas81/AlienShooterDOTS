@@ -9,6 +9,17 @@
       },
       "hash": "0cb684c3ec34521a1e53162918552d940993995f"
     },
+    "com.erenaydin.damagenumbers": {
+      "version": "https://github.com/nidaynere/damage-numbers-DOTS.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.entities": "1.0.16",
+        "com.unity.entities.graphics": "1.0.16",
+        "com.unity.render-pipelines.universal": "14.0.9"
+      },
+      "hash": "236cd80a97ef263e7c790b30b940837a69067083"
+    },
     "com.projectdawn.navigation": {
       "version": "file:com.projectdawn.navigation",
       "depth": 0,

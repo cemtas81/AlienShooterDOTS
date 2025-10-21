@@ -3,6 +3,8 @@ using UnityEngine;
 public class PlayerHealth : MonoBehaviour
 {
     [SerializeField] private int health = 10;
+    [SerializeField] private Animator ani;
+    private static readonly int DeathTrigger = Animator.StringToHash("Death");
     private PlayerHybridController playerController;
     private bool isDead = false;    
     private void Start()
@@ -17,10 +19,24 @@ public class PlayerHealth : MonoBehaviour
 
         if (health <= 0)
         {
-            // Player öldü, script disable edilir
-            playerController.enabled = false;
-            isDead = true;
-
+          
+         Death();
         }
     }
+    public void SetHealth(int health)
+    {
+        if (isDead) return;
+        this.health = health;
+        if (health <= 0)
+        {
+          
+            Death();
+        }
+    }
+    private void Death()
+    {
+        playerController.enabled = false;
+        isDead = true;
+        ani.SetTrigger(DeathTrigger);
+    }   
 }

@@ -45,11 +45,17 @@ public class PlayerHybridController : MonoBehaviour
     private NativeReference<EnemyHitResult> hitResult;
     private bool hitResultAllocated = false;
     public TMP_Text AimFormat;
+    private HealthAuthoring healthAuthoring;
+    private PlayerHealth playerHealth;
+    private int health = 100;
+    
+
     void Start()
     {
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         rb = GetComponent<Rigidbody>();
-
+        healthAuthoring = GetComponent<HealthAuthoring>();
+        playerHealth = GetComponent<PlayerHealth>();
         // NativeReference'ı allocate et
         hitResult = new NativeReference<EnemyHitResult>(Allocator.Persistent);
         hitResultAllocated = true;
@@ -74,6 +80,8 @@ public class PlayerHybridController : MonoBehaviour
             );
             entityManager.SetComponentData(playerEntity, LocalTransform.FromPosition((float3)transform.position));
             entityManager.SetComponentData(playerEntity, new PlayerInput { Move = float2.zero, Fire = false });
+            // Entity oluşturulurken HealthComponent ekleniyor mu?
+            entityManager.AddComponentData(playerEntity, new HealthComponent { Value = 100 });
         }
         else
         {
@@ -112,6 +120,11 @@ public class PlayerHybridController : MonoBehaviour
         {
             autoAim = !autoAim;
             Debug.Log($"Auto Aim: {(autoAim ? "ON" : "OFF")}");
+        }
+        if (playerEntity != Entity.Null)
+        {
+            var health = entityManager.GetComponentData<HealthComponent>(playerEntity);
+            playerHealth.SetHealth(health.Value);
         }
     }
 
