@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 5d014726978e80a43b6178cba929343b
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 216721
+  packageName: POLYGON Nightclubs - Low Poly 3D Art by Synty
+  packageVersion: 1.8.0
+  assetPath: Assets/PolygonNightclubs/Shaders/SyntyStudios_FlipbookCutout.shader
+  uploadId: 735263

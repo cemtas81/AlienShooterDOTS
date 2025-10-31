@@ -42,7 +42,7 @@ public partial struct EnemyAgentMovementSystem : ISystem
                 return;
             }
 
-            // Saldýrý menziline girdiyse dur
+            // stop if within attack range
             float r = attackRange.ValueRO.Value;
             float dx = PlayerPos.x - pos.x;
             float dz = PlayerPos.z - pos.z;
@@ -56,13 +56,14 @@ public partial struct EnemyAgentMovementSystem : ISystem
                 return;
             }
 
-            // Sadece duruyorsa veya hedef deðiþtiyse tekrar SetDestination
+            // if destination changed, update it
             if (body.ValueRO.IsStopped ||
                 dest.x != PlayerPos.x ||
                 dest.y != PlayerPos.y ||
                 dest.z != PlayerPos.z)
             {
                 body.ValueRW.SetDestination(PlayerPos);
+              
             }
         }
     }

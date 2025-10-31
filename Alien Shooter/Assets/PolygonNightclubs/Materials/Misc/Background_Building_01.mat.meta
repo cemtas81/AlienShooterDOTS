@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: b8cb736b38df9c04fb073cf247b43256
+timeCreated: 1644535550
+licenseType: Free
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 216721
+  packageName: POLYGON Nightclubs - Low Poly 3D Art by Synty
+  packageVersion: 1.8.0
+  assetPath: Assets/PolygonNightclubs/Materials/Misc/Background_Building_01.mat
+  uploadId: 735263
