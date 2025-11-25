@@ -5,34 +5,48 @@ using UnityEngine;
 /// <summary>
 /// Authoring - Enemy avoidance + player separation
 /// </summary>
-public class EnemyAvoidanceAuthoring : MonoBehaviour
+/// 
+namespace DotsNPC.Authoring
 {
-    [Header("Enemy-Enemy Separation")]
-    [Range(0.5f, 15f)]
-    public float DetectionRadius = 3f;
 
-    [Range(0f, 360f)]
-    public float MaxAngleDegrees = 230f;
-
-    [Range(0f, 1f)]
-    public float AvoidanceStrength = 0.8f;
-
-    [Header("Enemy-Player Separation")]
-    [Range(0.5f, 15f)]
-    public float PlayerSeparationRadius = 2.5f;
-
-    class Baker : Baker<EnemyAvoidanceAuthoring>
+    public class EnemyAvoidanceAuthoring : MonoBehaviour
     {
-        public override void Bake(EnemyAvoidanceAuthoring authoring)
+        [Header("Enemy-Enemy Separation")]
+        [Range(0.5f, 15f)]
+        public float DetectionRadius = 3f;
+
+        [Range(0f, 360f)]
+        public float MaxAngleDegrees = 230f;
+
+        [Range(0f, 1f)]
+        public float AvoidanceStrength = 0.8f;
+
+        [Header("Player Distance & Separation")]
+        [Range(1f, 20f)]
+        public float DesiredDistanceFromPlayer = 8f;
+
+        [Range(0.5f, 15f)]
+        public float PlayerSeparationRadius = 2.5f;
+
+        [Header("Physical Properties")]
+        [Range(0.1f, 2f)]
+        public float EntityRadius = 0.5f;
+
+        class Baker : Baker<EnemyAvoidanceAuthoring>
         {
-            var entity = GetEntity(TransformUsageFlags.Dynamic);
-            AddComponent(entity, new EnemyAvoidance
+            public override void Bake(EnemyAvoidanceAuthoring authoring)
             {
-                DetectionRadius = authoring.DetectionRadius,
-                MaxAngle = math.radians(authoring.MaxAngleDegrees),
-                AvoidanceStrength = authoring.AvoidanceStrength,
-                PlayerSeparationRadius = authoring.PlayerSeparationRadius
-            });
+                var entity = GetEntity(TransformUsageFlags.Dynamic);
+                AddComponent(entity, new EnemyAvoidance
+                {
+                    DetectionRadius = authoring.DetectionRadius,
+                    MaxAngle = math.radians(authoring.MaxAngleDegrees),
+                    AvoidanceStrength = authoring.AvoidanceStrength,
+                    DesiredDistanceFromPlayer = authoring.DesiredDistanceFromPlayer,
+                    PlayerSeparationRadius = authoring.PlayerSeparationRadius,
+                    EntityRadius = authoring.EntityRadius
+                });
+            }
         }
     }
 }

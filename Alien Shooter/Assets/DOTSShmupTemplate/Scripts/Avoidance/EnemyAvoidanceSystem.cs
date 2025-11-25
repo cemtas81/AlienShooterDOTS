@@ -71,12 +71,9 @@ namespace DotsNPC.Avoidance
                 Positions = m_CachedPositions,
                 PositionCount = enemyCount,
                 SectorCount = 12,
-                BlockDistance = 1.0f,
                 LateralThreshold = 0.8f,
-                SeparationMaxForce = 5f,
                 TurnSpeedDegPerSec = 180f,
-                BlendSeparationFactor = 0.6f,
-                DesiredRadius = 8f,
+                BlendSeparationFactor = 0.8f, // Artýrýldý
                 RadiusTolerance = 1.5f,
                 MinStoppingDistance = 0.3f
             };
@@ -95,12 +92,9 @@ namespace DotsNPC.Avoidance
             public float DeltaTime;
 
             public int SectorCount;
-            public float BlockDistance;
             public float LateralThreshold;
-            public float SeparationMaxForce;
             public float TurnSpeedDegPerSec;
             public float BlendSeparationFactor;
-            public float DesiredRadius;
             public float RadiusTolerance;
             public float MinStoppingDistance;
 
@@ -113,32 +107,42 @@ namespace DotsNPC.Avoidance
                 float distToPlayer = math.length(toPlayer);
                 float3 dirToPlayer = distToPlayer > 0.0001f ? toPlayer / distToPlayer : new float3(0, 0, 1);
 
-                float radialError = distToPlayer - DesiredRadius;
+                float desiredRadius = avoidance.DesiredDistanceFromPlayer;
+                float radialError = distToPlayer - desiredRadius;
+
+                // Separation her zaman hesapla (overlap engellemek için)
+                float3 separation = ComputeSeparationOptimized(currentPos, avoidance);
+                float separationMagnitude = math.length(separation);
+
+                // ===== EMERGENCY SEPARATION (Çakýþma varsa öncelik ver) =====
+                if (separationMagnitude > 2f) // Güçlü separation gerekli
+                {
+                    float3 separationDir = SafeNormalize(separation);
+                    transform.Position += separationDir * moveSpeed.Value * 1.5f * DeltaTime; // Hýzlý uzaklaþ
+                    transform.Rotation = quaternion.LookRotationSafe(separationDir, new float3(0, 1, 0));
+                    return;
+                }
 
                 // ===== STOPPING ZONE (Tolerans içinde ise dur) =====
                 if (math.abs(radialError) <= RadiusTolerance)
                 {
-                    // Sadece separation (diðer düþmanlardan uzak dur)
-                    float3 separation = ComputeSeparationOptimized(currentPos, avoidance);
-
                     float3 upDir = new float3(0, 1, 0);
-                    if (math.lengthsq(separation) > 0.0001f)
+                    if (separationMagnitude > 0.0001f)
                     {
                         float3 separationDir = SafeNormalize(separation);
                         transform.Rotation = quaternion.LookRotationSafe(separationDir, upDir);
 
-                        // Sadece çakýþma varsa hafif hareket et
-                        float sepLen = math.length(separation);
-                        if (sepLen > 1f)
+                        // Separation varsa hafif hareket et
+                        if (separationMagnitude > 0.5f)
                         {
-                            transform.Position += separationDir * moveSpeed.Value * 0.3f * DeltaTime;
+                            transform.Position += separationDir * moveSpeed.Value * 0.5f * DeltaTime;
                         }
                     }
                     return;
                 }
 
                 // ===== APPROACH/RETREAT PHASE =====
-                float needRadialAdjust = math.sign(radialError); // -1 (çok yakýn) veya +1 (çok uzak)
+                float needRadialAdjust = math.sign(radialError);
 
                 float3 upDir2 = new float3(0, 1, 0);
                 float3 tangent = math.normalize(math.cross(upDir2, dirToPlayer));
@@ -146,24 +150,30 @@ namespace DotsNPC.Avoidance
                 // Radyal ayarlama ile yaklaþ/uzaklaþ
                 float3 approachDir = math.normalize(
                     dirToPlayer * needRadialAdjust * 0.7f +
-                    tangent * 0.3f  // Hafif dairesel bileþen
+                    tangent * 0.3f
                 );
 
-                float3 separation2 = ComputeSeparationOptimized(currentPos, avoidance);
-
-                bool blocked = IsForwardBlockedOptimized(currentPos, currentForward, avoidance.DetectionRadius);
+                bool blocked = IsForwardBlockedOptimized(currentPos, currentForward, avoidance);
 
                 float3 chosenDir = blocked
-                    ? SampleBestSectorOptimized(currentPos, avoidance.DetectionRadius)
+                    ? SampleBestSectorOptimized(currentPos, avoidance)
                     : approachDir;
 
-                // Separation'ý blend et
-                if (math.lengthsq(separation2) > 0.0001f)
-                    chosenDir = math.normalize(chosenDir * (1f - BlendSeparationFactor) + separation2 * BlendSeparationFactor);
+                // Separation'ý blend et (güçlendirildi)
+                if (separationMagnitude > 0.0001f)
+                {
+                    float3 separationDir = SafeNormalize(separation);
+                    float blendFactor = math.min(BlendSeparationFactor + separationMagnitude * 0.2f, 1f);
+                    chosenDir = math.normalize(chosenDir * (1f - blendFactor) + separationDir * blendFactor);
+                }
 
                 float3 finalDir = RotateTowards(currentForward, chosenDir, math.radians(TurnSpeedDegPerSec) * DeltaTime);
 
                 float forwardScale = blocked ? 0.2f : 1f;
+
+                // Separation kuvvetli ise yavaþla
+                if (separationMagnitude > 1f)
+                    forwardScale *= 0.5f;
 
                 transform.Position += finalDir * moveSpeed.Value * forwardScale * DeltaTime;
                 transform.Rotation = quaternion.LookRotationSafe(finalDir, upDir2);
@@ -176,9 +186,9 @@ namespace DotsNPC.Avoidance
 
                 float rEnemy = avoidance.DetectionRadius;
                 float rEnemySq = rEnemy * rEnemy;
-                float rPlayer = avoidance.PlayerSeparationRadius;
-                float rPlayerSq = rPlayer * rPlayer;
+                float entityRadius = avoidance.EntityRadius;
 
+                // Enemy-Enemy separation (güçlendirildi)
                 for (int i = 0; i < PositionCount; i++)
                 {
                     float3 other = Positions[i];
@@ -188,38 +198,73 @@ namespace DotsNPC.Avoidance
                         continue;
 
                     float dist = math.sqrt(distSq);
-                    float proximity = 1f - dist / rEnemy;
+                    float minDistance = entityRadius * 2f; // Çakýþma mesafesi
+
+                    // Çakýþma durumunda çok güçlü force
+                    float force;
+                    if (dist < minDistance)
+                    {
+                        force = 10f; // Çok güçlü iterilme
+                    }
+                    else
+                    {
+                        float proximity = 1f - (dist - minDistance) / (rEnemy - minDistance);
+                        proximity = math.max(0f, proximity);
+                        force = proximity * avoidance.AvoidanceStrength;
+                    }
+
                     float3 dirNorm = diff * math.rsqrt(distSq);
-                    accum += dirNorm * proximity;
-                    weightSum += proximity;
+                    accum += dirNorm * force;
+                    weightSum += force;
                 }
 
+                // Player separation (güçlendirildi)
+                float rPlayer = avoidance.PlayerSeparationRadius;
                 float3 diffP = pos - PlayerPos;
                 float distSqP = math.lengthsq(diffP);
+                float rPlayerSq = rPlayer * rPlayer;
+
                 if (distSqP > 0.0001f && distSqP < rPlayerSq)
                 {
                     float distP = math.sqrt(distSqP);
-                    float proximityP = 1f - distP / rPlayer;
+                    float minPlayerDistance = 1f; // Player için minimum mesafe
+
+                    float playerForce;
+                    if (distP < minPlayerDistance)
+                    {
+                        playerForce = 15f; // Player'a çok yakýnsa çok güçlü iterilme
+                    }
+                    else
+                    {
+                        float proximityP = 1f - (distP - minPlayerDistance) / (rPlayer - minPlayerDistance);
+                        proximityP = math.max(0f, proximityP);
+                        playerForce = proximityP * avoidance.AvoidanceStrength * 3f;
+                    }
+
                     float3 dirNormP = diffP * math.rsqrt(distSqP);
-                    accum += dirNormP * proximityP * 1.2f;
-                    weightSum += proximityP * 1.2f;
+                    accum += dirNormP * playerForce;
+                    weightSum += playerForce;
                 }
 
                 if (weightSum <= 0f)
                     return 0;
 
                 float3 sep = accum / weightSum;
+
+                // Maksimum force limiti artýrýldý
+                float maxForce = 15f * avoidance.AvoidanceStrength;
                 float len = math.length(sep);
-                if (len > SeparationMaxForce)
-                    sep *= (SeparationMaxForce / len);
+                if (len > maxForce)
+                    sep *= (maxForce / len);
+
                 return sep;
             }
 
-            bool IsForwardBlockedOptimized(float3 pos, float3 forwardDir, float detectionRadius)
+            bool IsForwardBlockedOptimized(float3 pos, float3 forwardDir, EnemyAvoidance avoidance)
             {
-                float blockDist = math.min(BlockDistance, detectionRadius);
+                float blockDist = math.min(1.0f, avoidance.DetectionRadius);
                 float blockDistSq = blockDist * blockDist;
-                float latThresh = LateralThreshold;
+                float entityRadius = avoidance.EntityRadius;
 
                 for (int i = 0; i < PositionCount; i++)
                 {
@@ -237,15 +282,36 @@ namespace DotsNPC.Avoidance
                     float projLen = math.dot(toOther, forwardDir);
                     float3 lateral = toOther - forwardDir * projLen;
                     float latMag = math.length(lateral);
-                    if (latMag < latThresh)
+
+                    // Entity radius'u dikkate al
+                    if (latMag < LateralThreshold + entityRadius)
                         return true;
                 }
+
+                // Player ile de kontrol et
+                float3 toPlayer = PlayerPos - pos;
+                float playerDistSq = math.lengthsq(toPlayer);
+                if (playerDistSq < blockDistSq)
+                {
+                    float3 playerDirNorm = toPlayer * math.rsqrt(playerDistSq);
+                    float playerForwardDot = math.dot(forwardDir, playerDirNorm);
+                    if (playerForwardDot > 0f)
+                    {
+                        float playerProjLen = math.dot(toPlayer, forwardDir);
+                        float3 playerLateral = toPlayer - forwardDir * playerProjLen;
+                        float playerLatMag = math.length(playerLateral);
+
+                        if (playerLatMag < LateralThreshold + 1f) // Player için daha geniþ alan
+                            return true;
+                    }
+                }
+
                 return false;
             }
 
-            float3 SampleBestSectorOptimized(float3 pos, float detectionRadius)
+            float3 SampleBestSectorOptimized(float3 pos, EnemyAvoidance avoidance)
             {
-                int count = math.max(3, SectorCount);
+                int count = math.max(8, SectorCount); // Daha fazla sektör
                 float bestScore = -1f;
                 float3 bestDir = new float3(0, 0, 0);
 
@@ -253,7 +319,7 @@ namespace DotsNPC.Avoidance
                 {
                     float angle = (2f * math.PI * s) / count;
                     float3 dir = new float3(math.sin(angle), 0f, math.cos(angle));
-                    float score = ProbeDirectionOptimized(pos, dir, detectionRadius);
+                    float score = ProbeDirectionOptimized(pos, dir, avoidance);
                     if (score > bestScore)
                     {
                         bestScore = score;
@@ -263,11 +329,12 @@ namespace DotsNPC.Avoidance
                 return (bestScore < 0f) ? new float3(0, 0, 1) : bestDir;
             }
 
-            float ProbeDirectionOptimized(float3 pos, float3 dir, float detectionRadius)
+            float ProbeDirectionOptimized(float3 pos, float3 dir, EnemyAvoidance avoidance)
             {
-                float maxDist = detectionRadius;
+                float maxDist = avoidance.DetectionRadius;
                 float closest = maxDist;
                 float maxDistSq = maxDist * maxDist;
+                float entityRadius = avoidance.EntityRadius;
 
                 for (int i = 0; i < PositionCount; i++)
                 {
@@ -283,13 +350,37 @@ namespace DotsNPC.Avoidance
 
                     float3 lateral = v - dir * projection;
                     float latMagSq = math.lengthsq(lateral);
-                    if (latMagSq < 0.25f)
+
+                    // Entity radius'u dikkate al
+                    float checkRadius = entityRadius * 2f;
+                    if (latMagSq < checkRadius * checkRadius)
                     {
                         float dist = math.sqrt(distSq);
                         if (dist < closest)
                             closest = dist;
                     }
                 }
+
+                // Player'ý da kontrol et
+                float3 playerV = PlayerPos - pos;
+                float playerDistSq = math.lengthsq(playerV);
+                if (playerDistSq <= maxDistSq)
+                {
+                    float playerProjection = math.dot(playerV, dir);
+                    if (playerProjection > 0f)
+                    {
+                        float3 playerLateral = playerV - dir * playerProjection;
+                        float playerLatMagSq = math.lengthsq(playerLateral);
+
+                        if (playerLatMagSq < 4f) // Player için 2 birim radius
+                        {
+                            float playerDist = math.sqrt(playerDistSq);
+                            if (playerDist < closest)
+                                closest = playerDist;
+                        }
+                    }
+                }
+
                 return closest;
             }
 

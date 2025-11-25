@@ -8,11 +8,7 @@ namespace DotsNPC.Authoring
         public float MoveSpeed = 3f;
         public int Damage = 10;
         public float AttackRange = 6f;
-        
-        [Header("Avoidance Settings")]
-        public float DetectionRadius = 5f;
-        public float PlayerSeparationRadius = 3f;
-        public float AvoidanceStrength = 1f;
+
     }
 
     public class EnemyBaker : Baker<EnemyAuthoring>
@@ -26,14 +22,6 @@ namespace DotsNPC.Authoring
             AddComponent(entity, new AttackRange { Value = authoring.AttackRange });
             AddBuffer<AttackFlag>(entity);
             AddComponent(entity, new Cooldown { Value = 0f });
-            
-            AddComponent(entity, new EnemyAvoidance
-            {
-                DetectionRadius = authoring.DetectionRadius,
-                PlayerSeparationRadius = authoring.PlayerSeparationRadius,
-                AvoidanceStrength = authoring.AvoidanceStrength,
-                MaxAngle = 360f
-            });
         }
     }
 }

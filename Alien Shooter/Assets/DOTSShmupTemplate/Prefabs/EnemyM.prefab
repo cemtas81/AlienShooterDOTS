@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4340834683929016587}
   - component: {fileID: 3422186266447276098}
   - component: {fileID: 8059906477924857079}
+  - component: {fileID: 5066050580412955511}
   m_Layer: 0
   m_Name: EnemyM
   m_TagString: Enemy
@@ -106,9 +107,6 @@ MonoBehaviour:
   MoveSpeed: 3
   Damage: 1
   AttackRange: 6
-  DetectionRadius: 5
-  PlayerSeparationRadius: 5
-  AvoidanceStrength: 100
 --- !u!114 &8059906477924857079
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -122,3 +120,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthAuthoring
   Health: 1
+--- !u!114 &5066050580412955511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6437658096193471022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80c4ee42c5485e941964c6f93f11c653, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DotsNPC.Authoring.EnemyAvoidanceAuthoring
+  DetectionRadius: 3
+  MaxAngleDegrees: 230
+  AvoidanceStrength: 0.8
+  DesiredDistanceFromPlayer: 8
+  PlayerSeparationRadius: 3
+  EntityRadius: 0.5
