@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b75979cfb24f2241b0cdee13894efe6, type: 3}
+  m_Name: drop-frontroll-sprint-to-sprint
+  m_EditorClassIdentifier: 
+  animationName: Front Roll Low Drop - sprint-to-sprint
+  clip: {fileID: -3755374011048874991, guid: b9937e04eae26fe49a9a82271ca9363e, type: 3}
+  preExitClips: []
+  animatorStateName: 
+  obstacleFrontEdge: {x: 0, y: 0, z: 0}
+  obstacleBackEdge: {x: 0, y: 0, z: 0}
+  platformFrontEdge: {x: 0, y: 1, z: -2}
+  platformBackEdge: {x: 0, y: 1, z: 6.3}
+  doLeftHandIK: 0
+  leftHandIKOffset: {x: 0, y: 0, z: 0}
+  fullIKThreshDist: 0.25
+  animationDurationOverride: -1
+  rightWall: 0
+  rightWallXOffHeightLength: {x: 1, y: -1, z: -1}
+  disappearObstacleImmediatelyAfterClip: 0
+  doRightHandIK: 0
+  rightHandIKOffset: {x: 0, y: 0, z: 0}
+  playerZForMaxIKWeight: -1
+  IKTarget: 0
+  entryClip: {fileID: -8480993127082719338, guid: ca5e419704b118b4ab172fc51177c1e5, type: 3}
+  exitClip: {fileID: -8480993127082719338, guid: ca5e419704b118b4ab172fc51177c1e5, type: 3}
+  doCrossfade: 1

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e6cb2c225d5dd1f408105d1f19c68b2c
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241266
+  packageName: Parkour Animation Set
+  packageVersion: 1.1
+  assetPath: Assets/Plugins/Threepeat/ParkourAnimations/scenes/DemoConfig/low-stop-sprint-to-idle.asset
+  uploadId: 604789

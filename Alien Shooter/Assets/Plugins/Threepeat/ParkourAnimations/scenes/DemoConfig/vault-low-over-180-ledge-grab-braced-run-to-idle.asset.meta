@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: dca8d1908caeaf248804362a47f3bccd
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241266
+  packageName: Parkour Animation Set
+  packageVersion: 1.1
+  assetPath: Assets/Plugins/Threepeat/ParkourAnimations/scenes/DemoConfig/vault-low-over-180-ledge-grab-braced-run-to-idle.asset
+  uploadId: 604789

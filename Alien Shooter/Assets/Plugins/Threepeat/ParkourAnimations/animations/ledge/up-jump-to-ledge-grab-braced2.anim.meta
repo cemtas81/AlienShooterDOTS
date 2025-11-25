@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 05651dfc000d945439ed1ef0ce6c7a45
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241266
+  packageName: Parkour Animation Set
+  packageVersion: 1.1
+  assetPath: Assets/Plugins/Threepeat/ParkourAnimations/animations/ledge/up-jump-to-ledge-grab-braced2.anim
+  uploadId: 604789

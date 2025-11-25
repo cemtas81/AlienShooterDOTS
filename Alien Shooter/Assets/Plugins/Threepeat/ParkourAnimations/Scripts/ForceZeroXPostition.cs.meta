@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: accea55486b6f5f4ea6ce8816d1e7051
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241266
+  packageName: Parkour Animation Set
+  packageVersion: 1.1
+  assetPath: Assets/Plugins/Threepeat/ParkourAnimations/Scripts/ForceZeroXPostition.cs
+  uploadId: 604789

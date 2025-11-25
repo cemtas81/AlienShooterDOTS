@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 1e5289c8d2de3294c9e556614d29d2a5
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241266
+  packageName: Parkour Animation Set
+  packageVersion: 1.1
+  assetPath: Assets/Plugins/Threepeat/ParkourAnimations/scenes/DemoConfig/mantle-low-frontroll-sprint2sprint.asset
+  uploadId: 604789

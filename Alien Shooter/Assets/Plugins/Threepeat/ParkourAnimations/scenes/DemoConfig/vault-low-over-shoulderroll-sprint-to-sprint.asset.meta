@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 41e6de1726a2c854680b5e0b4bce2d4a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241266
+  packageName: Parkour Animation Set
+  packageVersion: 1.1
+  assetPath: Assets/Plugins/Threepeat/ParkourAnimations/scenes/DemoConfig/vault-low-over-shoulderroll-sprint-to-sprint.asset
+  uploadId: 604789

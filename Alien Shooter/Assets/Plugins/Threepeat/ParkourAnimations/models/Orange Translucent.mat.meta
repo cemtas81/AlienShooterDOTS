@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 00a12ed7ad5c6b34f83071b2964672cc
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241266
+  packageName: Parkour Animation Set
+  packageVersion: 1.1
+  assetPath: Assets/Plugins/Threepeat/ParkourAnimations/models/Orange Translucent.mat
+  uploadId: 604789

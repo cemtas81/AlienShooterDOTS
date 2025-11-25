@@ -1,0 +1,13 @@
+.VehicleInfo {
+    flex-grow: 1;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-self: stretch;
+}
+
+.VehicleInfoText {
+    color: rgb(255, 255, 255);
+    font-size: 18px;
+    -unity-text-outline-width: 0.3px;
+    -unity-text-outline-color: rgb(0, 0, 0);
+}

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 034cbdf8dcf295943a31648405fc25a5
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241266
+  packageName: Parkour Animation Set
+  packageVersion: 1.1
+  assetPath: Assets/Plugins/Threepeat/ParkourAnimations/models/hoodieguy_container.prefab
+  uploadId: 604789

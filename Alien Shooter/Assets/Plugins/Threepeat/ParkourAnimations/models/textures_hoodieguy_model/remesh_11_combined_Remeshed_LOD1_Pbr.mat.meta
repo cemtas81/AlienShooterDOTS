@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ff675da1d0dbbf54b80341e14f543f41
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241266
+  packageName: Parkour Animation Set
+  packageVersion: 1.1
+  assetPath: Assets/Plugins/Threepeat/ParkourAnimations/models/textures_hoodieguy_model/remesh_11_combined_Remeshed_LOD1_Pbr.mat
+  uploadId: 604789

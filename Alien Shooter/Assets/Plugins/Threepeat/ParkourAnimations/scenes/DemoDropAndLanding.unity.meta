@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 3be41efe9cba17443b7a124713112413
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241266
+  packageName: Parkour Animation Set
+  packageVersion: 1.1
+  assetPath: Assets/Plugins/Threepeat/ParkourAnimations/scenes/DemoDropAndLanding.unity
+  uploadId: 604789

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c315384f3aebd2646bc270bf777e07df
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241266
+  packageName: Parkour Animation Set
+  packageVersion: 1.1
+  assetPath: Assets/Plugins/Threepeat/ParkourAnimations/scenes/DemoConfig/vault-low-over-kong-long-sprint-to-sprintSpeedfix.asset
+  uploadId: 604789

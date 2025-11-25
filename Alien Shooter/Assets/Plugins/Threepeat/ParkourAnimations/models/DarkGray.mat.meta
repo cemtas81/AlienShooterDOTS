@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 684b414a06680c44982972d47c8e241e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241266
+  packageName: Parkour Animation Set
+  packageVersion: 1.1
+  assetPath: Assets/Plugins/Threepeat/ParkourAnimations/models/DarkGray.mat
+  uploadId: 604789

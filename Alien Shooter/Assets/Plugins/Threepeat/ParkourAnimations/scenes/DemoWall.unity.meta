@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: ba3d093913321714dbc5a7b1d0ca7c32
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241266
+  packageName: Parkour Animation Set
+  packageVersion: 1.1
+  assetPath: Assets/Plugins/Threepeat/ParkourAnimations/scenes/DemoWall.unity
+  uploadId: 604789

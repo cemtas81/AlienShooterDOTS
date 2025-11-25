@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: b9183b0fdcd389f43bc4dff1dc174930
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241266
+  packageName: Parkour Animation Set
+  packageVersion: 1.1
+  assetPath: Assets/Plugins/Threepeat/ParkourAnimations/Scripts/ObjectCycler.cs
+  uploadId: 604789

@@ -106,6 +106,9 @@ MonoBehaviour:
   MoveSpeed: 3
   Damage: 1
   AttackRange: 6
+  DetectionRadius: 5
+  PlayerSeparationRadius: 5
+  AvoidanceStrength: 100
 --- !u!114 &8059906477924857079
 MonoBehaviour:
   m_ObjectHideFlags: 0

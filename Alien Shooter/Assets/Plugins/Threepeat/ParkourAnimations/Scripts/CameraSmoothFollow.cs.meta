@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 110c5c97c03ac7047a659544debb3f06
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241266
+  packageName: Parkour Animation Set
+  packageVersion: 1.1
+  assetPath: Assets/Plugins/Threepeat/ParkourAnimations/Scripts/CameraSmoothFollow.cs
+  uploadId: 604789

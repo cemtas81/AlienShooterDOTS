@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a211bc4fede07e54884903c1c0b0a9bd
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241266
+  packageName: Parkour Animation Set
+  packageVersion: 1.1
+  assetPath: Assets/Plugins/Threepeat/ParkourAnimations/scenes/DemoConfig/vault-high-over-twohand-sprint-to-landing.asset
+  uploadId: 604789

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: cb020fd4d18f8984d91798d0741e8810
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241266
+  packageName: Parkour Animation Set
+  packageVersion: 1.1
+  assetPath: Assets/Plugins/Threepeat/ParkourAnimations/scenes/DemoConfig/drop-reverse-gainer-sprint2sprint_v1.asset
+  uploadId: 604789

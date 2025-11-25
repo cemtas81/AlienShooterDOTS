@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 8df5c0ea1ad14714fb3006ee2694c389
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241266
+  packageName: Parkour Animation Set
+  packageVersion: 1.1
+  assetPath: Assets/Plugins/Threepeat/ParkourAnimations/scenes/DemoConfig/sprint-to-wallplant-forwardleap-then-backflip.asset
+  uploadId: 604789

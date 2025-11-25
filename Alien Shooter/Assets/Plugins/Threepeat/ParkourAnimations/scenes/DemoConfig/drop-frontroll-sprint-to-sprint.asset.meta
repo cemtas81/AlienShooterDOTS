@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e2ae9e3012b11b941b75ad7571514196
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241266
+  packageName: Parkour Animation Set
+  packageVersion: 1.1
+  assetPath: Assets/Plugins/Threepeat/ParkourAnimations/scenes/DemoConfig/drop-frontroll-sprint-to-sprint.asset
+  uploadId: 604789

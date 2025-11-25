@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b75979cfb24f2241b0cdee13894efe6, type: 3}
+  m_Name: vault-low-over-180-ledge-grab-braced-run-to-idle
+  m_EditorClassIdentifier: 
+  animationName: Running 180 Ledge Grab Vault into Drop 180
+  clip: {fileID: -2526285364892403637, guid: 3e72296d6f4a5464097ba3823b4e4d41, type: 3}
+  preExitClips:
+  - {fileID: 3135795334570757331, guid: f02d1ba2d23038d488aeecb46be19871, type: 3}
+  animatorStateName: 
+  obstacleFrontEdge: {x: 0, y: 3.95, z: 4.7}
+  obstacleBackEdge: {x: 0, y: 3.95, z: 5.1}
+  platformFrontEdge: {x: 0, y: 3, z: -2}
+  platformBackEdge: {x: 0, y: 3, z: 4.7}
+  doLeftHandIK: 1
+  leftHandIKOffset: {x: 0.3, y: -0.03, z: 0}
+  fullIKThreshDist: 0.25
+  rightWall: 0
+  rightWallXOffHeightLength: {x: 1, y: -1, z: -1}
+  doRightHandIK: 1
+  rightHandIKOffset: {x: -0.3, y: -0.03, z: 0}
+  playerZForMaxIKWeight: 1.5
+  IKTarget: 1
+  entryClip: {fileID: -8480993127082719338, guid: ca5e419704b118b4ab172fc51177c1e5, type: 3}
+  exitClip: {fileID: -8480993127082719338, guid: ca5e419704b118b4ab172fc51177c1e5, type: 3}
+  doCrossfade: 1

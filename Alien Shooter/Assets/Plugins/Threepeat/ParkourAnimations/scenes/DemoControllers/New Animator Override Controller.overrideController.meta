@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 4499b3485ec24b0429713568715f5071
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 22100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241266
+  packageName: Parkour Animation Set
+  packageVersion: 1.1
+  assetPath: Assets/Plugins/Threepeat/ParkourAnimations/scenes/DemoControllers/New
+    Animator Override Controller.overrideController
+  uploadId: 604789

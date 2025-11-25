@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 02540664d79b7cb4b8925d3882db3730
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241266
+  packageName: Parkour Animation Set
+  packageVersion: 1.1
+  assetPath: Assets/Plugins/Threepeat/ParkourAnimations/scenes/DemoConfig/vault-high-onto-climbup-sprint-to-sprint.asset
+  uploadId: 604789

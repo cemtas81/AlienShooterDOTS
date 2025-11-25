@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 2b1bb0ef92553b049958ae5ed2e67415
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241266
+  packageName: Parkour Animation Set
+  packageVersion: 1.1
+  assetPath: Assets/Plugins/Threepeat/ParkourAnimations/models/hoodieguy_model.prefab
+  uploadId: 604789

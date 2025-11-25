@@ -1,0 +1,25 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/Data/UI/UI%20Toolkit/VehicleHUD.uss?fileID=7433441132597879392&amp;guid=58c94045ea1ebea459422b0477f80bf5&amp;type=3#VehicleHUD" />
+    <ui:VisualElement name="MainPanel" style="flex-grow: 1;">
+        <ui:VisualElement name="VehicleInfoPanel" style="flex-grow: 0; background-color: rgba(41, 41, 41, 0.56); width: 150px; height: auto; top: auto; bottom: 0; left: 0; position: absolute; align-items: flex-start; font-size: 14px;">
+            <ui:VisualElement name="Speed" class="VehicleInfo" style="flex-direction: row; flex-grow: 0; opacity: 1; border-bottom-width: 1px; border-left-color: rgba(255, 255, 255, 0.17); border-right-color: rgba(255, 255, 255, 0.17); border-top-color: rgba(255, 255, 255, 0.17); border-bottom-color: rgba(255, 255, 255, 0.17); padding-bottom: 0; height: auto;">
+                <ui:Label text="Speed" name="Label" class="VehicleInfoText" style="flex-grow: 1; font-size: 12px; -unity-text-align: lower-left; justify-content: flex-start; align-items: stretch; -unity-font-style: bold;" />
+                <ui:Label text="00" name="Value" class="VehicleInfoText" style="-unity-text-align: lower-left; font-size: 14px;" />
+                <ui:Label text="km/h&#10;" name="Unit" class="VehicleInfoText" style="-unity-text-align: lower-left; font-size: 12px;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="RPM" class="VehicleInfo" style="flex-direction: row; flex-grow: 0; border-bottom-width: 1px; border-left-color: rgba(255, 255, 255, 0.17); border-right-color: rgba(255, 255, 255, 0.17); border-top-color: rgba(255, 255, 255, 0.17); border-bottom-color: rgba(255, 255, 255, 0.17);">
+                <ui:Label text="RPM" class="VehicleInfoText" style="flex-grow: 1; font-size: 12px; -unity-text-align: lower-left; -unity-font-style: bold;" />
+                <ui:Label text="00" name="Value" class="VehicleInfoText" style="-unity-text-align: lower-left; font-size: 14px;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="Torque" class="VehicleInfo" style="flex-direction: row; flex-grow: 0; border-bottom-width: 1px; border-left-color: rgba(255, 255, 255, 0.17); border-right-color: rgba(255, 255, 255, 0.17); border-top-color: rgba(255, 255, 255, 0.17); border-bottom-color: rgba(255, 255, 255, 0.17);">
+                <ui:Label text="Torque" class="VehicleInfoText" style="flex-grow: 1; font-size: 12px; -unity-text-align: lower-left; -unity-font-style: bold;" />
+                <ui:Label text="00" name="Value" class="VehicleInfoText" style="-unity-text-align: lower-left; font-size: 14px;" />
+                <ui:Label text="Nm&#10;" name="Unit" class="VehicleInfoText" style="-unity-text-align: lower-left; font-size: 12px;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="Gear" class="VehicleInfo" style="flex-direction: row; flex-grow: 0; border-bottom-width: 1px; border-left-color: rgba(255, 255, 255, 0.17); border-right-color: rgba(255, 255, 255, 0.17); border-top-color: rgba(255, 255, 255, 0.17); border-bottom-color: rgba(255, 255, 255, 0.17);">
+                <ui:Label text="Gear" class="VehicleInfoText" style="flex-grow: 1; font-size: 12px; -unity-text-align: lower-left; -unity-font-style: bold;" />
+                <ui:Label text="00" name="Value" class="VehicleInfoText" style="-unity-text-align: lower-left; font-size: 14px;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

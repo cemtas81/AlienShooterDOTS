@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 9f5a2430bb6029247afbf251fd98bbc5
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241266
+  packageName: Parkour Animation Set
+  packageVersion: 1.1
+  assetPath: Assets/Plugins/Threepeat/ParkourAnimations/models/Gray.mat
+  uploadId: 604789
