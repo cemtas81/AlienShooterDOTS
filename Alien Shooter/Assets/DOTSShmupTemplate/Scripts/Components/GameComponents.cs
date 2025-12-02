@@ -23,6 +23,10 @@ public struct PlayerFirePoint : IComponentData
     public float3 Position;
     public quaternion Rotation;
 }
+public struct FireRateConfig : IComponentData
+{
+    public float FireCooldown;
+}
 public struct GameManager : IComponentData { }
 public struct GameScore : IComponentData
 {

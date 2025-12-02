@@ -223,7 +223,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67ee5f21c3b267c4b80b5a0efbf7b313, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBulletPrefabReferenceAuthoring
-  enemyBulletPrefab: {fileID: 6396521406585865662, guid: f669aba6dfb04f447b3207484bbd278d, type: 3}
+  enemyBulletPrefab: {fileID: 3219657845685035819, guid: ebdde205ae8a27448816298ccf40dabd, type: 3}
 --- !u!114 &853917382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -273,6 +273,7 @@ MonoBehaviour:
   SpawnInterval: 0.1
   SpawnRadius: 50
   MaxEnemy: 5000
+  SpawnCountText: {fileID: 0}
 --- !u!4 &955928473
 Transform:
   m_ObjectHideFlags: 0

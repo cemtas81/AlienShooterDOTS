@@ -11,23 +11,30 @@ public partial struct EnemyDeathSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         var ecb = new EntityCommandBuffer(Allocator.TempJob);
-        float deltaTime = SystemAPI.Time.DeltaTime;
-        //int enemiesDestroyed = 0;
-
-        // update death timers and destroy entities when timer reaches zero
-        foreach (var (dying, entity) in SystemAPI.Query<RefRW<EnemyDying>>().WithEntityAccess())
+        
+        try
         {
-            dying.ValueRW.DeathTimer -= deltaTime;
+            float deltaTime = SystemAPI.Time.DeltaTime;
+            //int enemiesDestroyed = 0;
 
-            if (dying.ValueRW.DeathTimer <= 0f)
+            // update death timers and destroy entities when timer reaches zero
+            foreach (var (dying, entity) in SystemAPI.Query<RefRW<EnemyDying>>().WithEntityAccess())
             {
-                // Animtion ended, destroy entity
-                ecb.DestroyEntity(entity);
-                //enemiesDestroyed++;
-            }
-        }
+                dying.ValueRW.DeathTimer -= deltaTime;
 
-        ecb.Playback(state.EntityManager);
-        ecb.Dispose();
+                if (dying.ValueRW.DeathTimer <= 0f)
+                {
+                    // Animtion ended, destroy entity
+                    ecb.DestroyEntity(entity);
+                    //enemiesDestroyed++;
+                }
+            }
+
+            ecb.Playback(state.EntityManager);
+        }
+        finally
+        {
+            ecb.Dispose();
+        }
     }
 }

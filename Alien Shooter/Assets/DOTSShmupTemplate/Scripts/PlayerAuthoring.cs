@@ -4,7 +4,7 @@ using UnityEngine;
 public class PlayerAuthoring : MonoBehaviour
 {
     public float MoveSpeed = 5f;
-    //public int Health = 100;
+    public float FireCooldown = 0.5f;  // Inspector'da ayarlanabilir
 }
 
 public class PlayerBaker : Baker<PlayerAuthoring>
@@ -14,7 +14,7 @@ public class PlayerBaker : Baker<PlayerAuthoring>
         var entity = GetEntity(TransformUsageFlags.Dynamic);
         AddComponent(entity, new PlayerTag());
         AddComponent(entity, new PlayerMoveSpeed { Value = authoring.MoveSpeed });
-        AddComponent<PlayerInput>(entity); // EKLE!
-        //AddComponent(entity, new HealthComponent { Value = authoring.Health });
+        AddComponent(entity, new FireRateConfig { FireCooldown = authoring.FireCooldown });  // YENÝ
+        AddComponent<PlayerInput>(entity);
     }
 }

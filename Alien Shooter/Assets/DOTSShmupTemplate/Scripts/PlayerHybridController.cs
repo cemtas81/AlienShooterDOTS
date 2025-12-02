@@ -5,7 +5,7 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
-using UnityEngine.UI;
+
 
 /// <summary>
 /// Hybrid Player controller: GameObject hareket ve rotasyonu, DOTS ile köprü.
@@ -29,6 +29,11 @@ public class PlayerHybridController : MonoBehaviour
     [Header("DOTS Integration")]
     public GameObject bulletPrefabGO; // DOTS'a bake edilmiş BulletAuthoring prefabı
     public Transform firePoint;
+
+    [Header("Fire Rate")]  
+    [SerializeField]
+    [Range(0.001f, 2f)]  
+    private float fireCooldown= 0.5f; //  Varsayılan atış süresi
 
     private EntityManager entityManager;
     private Entity bulletPrefabEntity;
@@ -56,11 +61,9 @@ public class PlayerHybridController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         healthAuthoring = GetComponent<HealthAuthoring>();
         playerHealth = GetComponent<PlayerHealth>();
-        // NativeReference'ı allocate et
         hitResult = new NativeReference<EnemyHitResult>(Allocator.Persistent);
         hitResultAllocated = true;
 
-        // DOTS bullet prefab entity'sini bul
         var query = entityManager.CreateEntityQuery(typeof(BulletPrefabReference));
         if (query.CalculateEntityCount() > 0)
             bulletPrefabEntity = entityManager.GetComponentData<BulletPrefabReference>(
@@ -68,7 +71,6 @@ public class PlayerHybridController : MonoBehaviour
         else
             Debug.LogError("BulletPrefabReference bulunamadı, DOTS bullet prefabı eksik olabilir.");
 
-        // PlayerTag entity'sini bul veya eksiksiz olarak oluştur
         var playerQuery = entityManager.CreateEntityQuery(typeof(PlayerTag));
         if (playerQuery.CalculateEntityCount() == 0)
         {
@@ -76,22 +78,28 @@ public class PlayerHybridController : MonoBehaviour
                 typeof(PlayerTag),
                 typeof(LocalTransform),
                 typeof(PlayerInput),
-                typeof(PlayerFirePoint)
+                typeof(PlayerFirePoint),
+                typeof(FireRateConfig)  // Component ekle
             );
             entityManager.SetComponentData(playerEntity, LocalTransform.FromPosition((float3)transform.position));
             entityManager.SetComponentData(playerEntity, new PlayerInput { Move = float2.zero, Fire = false });
-            // Entity oluşturulurken HealthComponent ekleniyor mu?
             entityManager.AddComponentData(playerEntity, new HealthComponent { Value = 100 });
         }
         else
         {
             playerEntity = playerQuery.GetSingletonEntity();
-            // LocalTransform ve PlayerInput eksikse ekle
             if (!entityManager.HasComponent<LocalTransform>(playerEntity))
                 entityManager.AddComponentData(playerEntity, LocalTransform.FromPosition((float3)transform.position));
             if (!entityManager.HasComponent<PlayerInput>(playerEntity))
                 entityManager.AddComponentData(playerEntity, new PlayerInput { Move = float2.zero, Fire = false });
+            
+            // FireRateConfig ekle
+            if (!entityManager.HasComponent<FireRateConfig>(playerEntity))
+                entityManager.AddComponentData(playerEntity, new FireRateConfig { FireCooldown = fireCooldown });
         }
+
+        //  BAŞLANGIÇTA SADECE BİR KEZ SET ET
+        entityManager.SetComponentData(playerEntity, new FireRateConfig { FireCooldown = fireCooldown });
     }
 
     void OnDestroy()
@@ -288,4 +296,14 @@ public class PlayerHybridController : MonoBehaviour
         }
     }
 
+    //  Sadece başlangıçta çağrılacak
+    public void SetFireCooldown(float cooldown)
+    {
+        fireCooldown = Mathf.Clamp(cooldown, 0.001f, 2f);
+
+        if (entityManager.Exists(playerEntity))
+        {
+            entityManager.SetComponentData(playerEntity, new FireRateConfig { FireCooldown = fireCooldown });
+        }
+    }
 }

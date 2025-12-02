@@ -24,37 +24,43 @@ public partial struct PlayerDamageSystem : ISystem
 
         var ecb = new EntityCommandBuffer(Allocator.TempJob);
 
-        var playerEntity = playerQuery.GetSingletonEntity();
-        var playerTransform = state.EntityManager.GetComponentData<LocalTransform>(playerEntity);
-        var playerHealth = state.EntityManager.GetComponentData<HealthComponent>(playerEntity);
-
-        float3 playerPos = playerTransform.Position;
-        int totalDamage = 0;
-
-        foreach (var (bulletTransform, bulletDamage, bulletEntity) in
-                 SystemAPI.Query<RefRO<LocalTransform>, RefRO<DamageComponent>>()
-                          .WithAll<EnemyBulletTag>()
-                          .WithEntityAccess())
+        try
         {
-            float3 bulletPos = bulletTransform.ValueRO.Position;
-            float2 bulletPosXZ = new(bulletPos.x, bulletPos.z);
-            float2 playerPosXZ = new(playerPos.x, playerPos.z);
-            float horizontalDistSq = math.distancesq(bulletPosXZ, playerPosXZ);
+            var playerEntity = playerQuery.GetSingletonEntity();
+            var playerTransform = state.EntityManager.GetComponentData<LocalTransform>(playerEntity);
+            var playerHealth = state.EntityManager.GetComponentData<HealthComponent>(playerEntity);
 
-            if (horizontalDistSq < .3f)
+            float3 playerPos = playerTransform.Position;
+            int totalDamage = 0;
+
+            foreach (var (bulletTransform, bulletDamage, bulletEntity) in
+                     SystemAPI.Query<RefRO<LocalTransform>, RefRO<DamageComponent>>()
+                              .WithAll<EnemyBulletTag>()
+                              .WithEntityAccess())
             {
-                totalDamage += bulletDamage.ValueRO.Value;
-                ecb.DestroyEntity(bulletEntity);
+                float3 bulletPos = bulletTransform.ValueRO.Position;
+                float2 bulletPosXZ = new(bulletPos.x, bulletPos.z);
+                float2 playerPosXZ = new(playerPos.x, playerPos.z);
+                float horizontalDistSq = math.distancesq(bulletPosXZ, playerPosXZ);
+
+                if (horizontalDistSq < .3f)
+                {
+                    totalDamage += bulletDamage.ValueRO.Value;
+                    ecb.DestroyEntity(bulletEntity);
+                }
             }
-        }
 
-        if (totalDamage > 0)
+            if (totalDamage > 0)
+            {
+                playerHealth.Value -= totalDamage;
+                state.EntityManager.SetComponentData(playerEntity, playerHealth);
+            }
+
+            ecb.Playback(state.EntityManager);
+        }
+        finally
         {
-            playerHealth.Value -= totalDamage;
-            state.EntityManager.SetComponentData(playerEntity, playerHealth);
+            ecb.Dispose();
         }
-
-        ecb.Playback(state.EntityManager);
-        ecb.Dispose();
     }
 }
