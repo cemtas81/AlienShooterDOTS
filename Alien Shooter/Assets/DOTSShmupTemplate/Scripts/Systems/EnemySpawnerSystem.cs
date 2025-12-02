@@ -6,6 +6,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.AI;
+using TMPro;
 using Random = Unity.Mathematics.Random;
 
 [BurstCompile]
@@ -32,10 +33,12 @@ public partial struct EnemySpawnerSystem : ISystem
     }
 
     private Unity.Mathematics.Random random;
+    private bool maxEnemyLimitLogged;
 
     public void OnCreate(ref SystemState state)
     {
         random = Random.CreateFromIndex(1234);
+        maxEnemyLimitLogged = false;
     }
 
     public void OnUpdate(ref SystemState state)
@@ -65,7 +68,31 @@ public partial struct EnemySpawnerSystem : ISystem
             spawner.ValueRW.TimeUntilNextSpawn -= deltaTime;
             if (spawner.ValueRW.TimeUntilNextSpawn <= 0f)
             {
+                // MaxEnemy sınırlaması kontrol et
+                if (spawner.ValueRO.MaxEnemy > 0 && spawner.ValueRO.SpawnCounter >= spawner.ValueRO.MaxEnemy)
+                {
+                    if (!maxEnemyLimitLogged)
+                    {
+                        Debug.Log($"[EnemySpawnerSystem] Maksimum düşman sayısına ulaşıldı! MaxEnemy: {spawner.ValueRO.MaxEnemy}");
+                        maxEnemyLimitLogged = true;
+                    }
+                    spawner.ValueRW.TimeUntilNextSpawn = spawner.ValueRO.SpawnInterval;
+                    continue;
+                }
+
                 int cycle = spawner.ValueRO.MeleeCount + spawner.ValueRO.RangedCount;
+
+                // MaxEnemy sınırı varsa, spawn edilecek sayıyı azalt
+                if (spawner.ValueRO.MaxEnemy > 0)
+                {
+                    int remainingSlots = spawner.ValueRO.MaxEnemy - spawner.ValueRO.SpawnCounter;
+                    if (remainingSlots <= 0)
+                    {
+                        spawner.ValueRW.TimeUntilNextSpawn = spawner.ValueRO.SpawnInterval;
+                        continue;
+                    }
+                    cycle = math.min(cycle, remainingSlots);
+                }
 
                 var randomAngles = new NativeArray<float>(cycle, Allocator.TempJob);
                 var spawnPositions = new NativeArray<float3>(cycle, Allocator.TempJob);

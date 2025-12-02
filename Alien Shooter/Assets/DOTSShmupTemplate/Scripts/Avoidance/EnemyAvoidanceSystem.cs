@@ -7,10 +7,10 @@ using Unity.Transforms;
 namespace DotsNPC.Avoidance
 {
     /// <summary>
-    /// Basit ama etkili avoidance sistemi
-    /// - Enemy-to-Enemy collision prevention
-    /// - Player separation
-    /// - Doðal, titremesiz hareket
+    /// Basit ve önceki doðru çalýþan avoidance mantýðý:
+    /// - Enemy-to-Enemy çarpýþma önleme
+    /// - Player'a fazla yaklaþýnca itme
+    /// - EK: Authoring'ten verilen DesiredDistanceFromPlayer içine girince hafif dýþa itme (durma mesafesi)
     /// </summary>
     [BurstCompile]
     [RequireMatchingQueriesForUpdate]
@@ -43,23 +43,21 @@ namespace DotsNPC.Avoidance
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            // Player pozisyonunu al
+            // Player pozisyonu
             float3 playerPos = float3.zero;
             bool hasPlayer = false;
-
             foreach (var (tr, _) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<PlayerTag>>())
             {
                 playerPos = tr.ValueRO.Position;
                 hasPlayer = true;
                 break;
             }
-
             if (!hasPlayer) return;
 
             int count = m_EnemyQuery.CalculateEntityCount();
             if (count == 0) return;
 
-            // Cache boyutunu ayarla
+            // Cache boyutunu büyüt
             if (m_Positions.Length < count)
             {
                 m_Positions.Dispose();
@@ -68,7 +66,7 @@ namespace DotsNPC.Avoidance
                 m_Radii = new NativeArray<float>(count + 32, Allocator.Persistent);
             }
 
-            // Pozisyon ve radiuslarý cache'le (tek kere!)
+            // Pozisyon + radius cache (tek pass)
             using (var transforms = m_EnemyQuery.ToComponentDataArray<LocalTransform>(Allocator.TempJob))
             using (var avoidances = m_EnemyQuery.ToComponentDataArray<EnemyAvoidance>(Allocator.TempJob))
             {
@@ -79,7 +77,6 @@ namespace DotsNPC.Avoidance
                 }
             }
 
-            // Avoidance job'u - SADECE BU SYSTEM
             var job = new AvoidanceJob
             {
                 Positions = m_Positions,
@@ -115,84 +112,91 @@ namespace DotsNPC.Avoidance
                 float3 totalSeparation = float3.zero;
                 float totalForce = 0f;
 
-                // === Enemy-to-Enemy Separation ===
+                // === Enemy-to-Enemy Separation (ORÝJÝNAL MANTIK) ===
                 for (int i = 0; i < EnemyCount; i++)
                 {
                     float3 otherPos = Positions[i];
                     float otherRadius = Radii[i];
-
                     float3 delta = pos - otherPos;
                     float distSq = math.lengthsq(delta);
-
-                    // Kendimize karþý kontrol etme
                     if (distSq < 0.0001f) continue;
 
-                    // Detection radius dýþýnda ignore
                     float detectionSq = detectionRadius * detectionRadius;
                     if (distSq > detectionSq) continue;
 
                     float dist = math.sqrt(distSq);
                     float minDist = myRadius + otherRadius;
-
                     float3 direction = delta / dist;
 
-                    // Çarpýþma var mý?
                     if (dist < minDist)
                     {
-                        // Overlap: penetration'a göre push
                         float penetration = minDist - dist;
                         totalSeparation += direction * penetration * 2f;
                         totalForce = math.max(totalForce, penetration);
                     }
                     else
                     {
-                        // Proximity-based gentle push
                         float proximity = 1f - (dist / detectionRadius);
                         if (proximity > 0f)
-                        {
                             totalSeparation += direction * proximity * avoidance.AvoidanceStrength * 0.5f;
-                        }
                     }
                 }
 
-                // === Player Separation ===
+                // === Player Separation + DURMA MESAFESÝ ===
+                // Amaç: PlayerSeparationRadius içinde agresif itme (eski davranýþ),
+                // ayrýca DesiredDistanceFromPlayer (durma mesafesi) içine girince
+                // yumuþak dýþa itme ekleyerek o mesafede "durmuþ" gibi kalmasýný saðlamak.
                 float3 playerDelta = pos - PlayerPos;
                 float playerDistSq = math.lengthsq(playerDelta);
-                float playerSepRadiusSq = avoidance.PlayerSeparationRadius * avoidance.PlayerSeparationRadius;
 
-                if (playerDistSq > 0.0001f && playerDistSq < playerSepRadiusSq)
+                if (playerDistSq > 0.0001f)
                 {
                     float playerDist = math.sqrt(playerDistSq);
-                    float3 playerDir = playerDelta / playerDist;
-                    float playerMinDist = myRadius + 0.4f;
+                    float3 playerDir = playerDelta / playerDist; // oyuncudan dýþa doðru
+                    float strongSepRadius = avoidance.PlayerSeparationRadius;
+                    float desiredStopDist = avoidance.DesiredDistanceFromPlayer;
 
-                    if (playerDist < playerMinDist)
+                    // 1) Çok yakýnda -> güçlü itiþ (ESKÝ KOD)
+                    if (playerDist < strongSepRadius)
                     {
-                        float penetration = playerMinDist - playerDist;
-                        totalSeparation += playerDir * penetration * 3f;
-                        totalForce = math.max(totalForce, penetration);
-                    }
-                    else
-                    {
-                        float proximity = 1f - (playerDist / avoidance.PlayerSeparationRadius);
-                        if (proximity > 0f)
+                        float playerMinDist = myRadius + 0.4f;
+                        if (playerDist < playerMinDist)
                         {
-                            totalSeparation += playerDir * proximity * avoidance.AvoidanceStrength * 1.5f;
+                            float penetration = playerMinDist - playerDist;
+                            totalSeparation += playerDir * penetration * 3f;
+                            totalForce = math.max(totalForce, penetration);
+                        }
+                        else
+                        {
+                            float proximity = 1f - (playerDist / strongSepRadius);
+                            if (proximity > 0f)
+                                totalSeparation += playerDir * proximity * avoidance.AvoidanceStrength * 1.5f;
                         }
                     }
+                    // 2) Durma mesafesinin içinde ama güçlü separation bölgesinin dýþýnda
+                    // PlayerDist < desiredStopDist -> hafif dýþa it: orbit / durma halkasýný koru
+                    else if (playerDist < desiredStopDist)
+                    {
+                        float proximity = 1f - (playerDist / desiredStopDist); // 0 uzak, 1 çok yakýn
+                        if (proximity > 0f)
+                        {
+                            // Daha yumuþak çarpan (1f) kullanýyoruz, istersen artýrabilirsin
+                            totalSeparation += playerDir * proximity * avoidance.AvoidanceStrength;
+                        }
+                    }
+                    // 3) desiredStopDist'ten uzaksa hiçbir içe çekme eklemiyoruz (orijinal davranýþ korunur)
                 }
 
-                // === Apply Movement ===
+                // === Hareket Uygulama (ORÝJÝNAL) ===
                 if (math.lengthsq(totalSeparation) > 0.0001f)
                 {
                     totalSeparation = math.normalize(totalSeparation);
 
-                    // Force'a göre hýz ayarla
                     float speedMultiplier = 1f;
                     if (totalForce > 1f)
-                        speedMultiplier = 1.5f; // Çarpýþýrsa hýzlý kaç
+                        speedMultiplier = 1.5f;
                     else if (totalForce > 0.3f)
-                        speedMultiplier = 0.8f; // Yakýnsa yavaþla
+                        speedMultiplier = 0.8f;
 
                     transform.Position += totalSeparation * moveSpeed * speedMultiplier * DeltaTime;
                     transform.Rotation = quaternion.LookRotationSafe(totalSeparation, new float3(0, 1, 0));

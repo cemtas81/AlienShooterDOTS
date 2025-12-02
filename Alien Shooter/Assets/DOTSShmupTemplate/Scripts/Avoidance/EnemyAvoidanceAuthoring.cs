@@ -9,7 +9,7 @@ public class EnemyAvoidanceAuthoring : MonoBehaviour
     public float AvoidanceStrength = 1f;
     public float PlayerSeparationRadius = 2f;
     public float EntityRadius = 0.5f;
-
+    public float DesiredDistanceFromPlayer = 5f;
     class EnemyAvoidanceBaker : Baker<EnemyAvoidanceAuthoring>
     {
         public override void Bake(EnemyAvoidanceAuthoring authoring)
@@ -22,7 +22,7 @@ public class EnemyAvoidanceAuthoring : MonoBehaviour
                 AvoidanceStrength = authoring.AvoidanceStrength,
                 PlayerSeparationRadius = authoring.PlayerSeparationRadius,
                 EntityRadius = authoring.EntityRadius,
-                DesiredDistanceFromPlayer = 5f,
+                DesiredDistanceFromPlayer = authoring.DesiredDistanceFromPlayer,
                 MaxAngle = 0f // Kullanýlmýyor
             });
 

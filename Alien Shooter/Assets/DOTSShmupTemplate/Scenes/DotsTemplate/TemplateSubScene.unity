@@ -272,6 +272,7 @@ MonoBehaviour:
   RangedCount: 1
   SpawnInterval: 0.1
   SpawnRadius: 50
+  MaxEnemy: 5000
 --- !u!4 &955928473
 Transform:
   m_ObjectHideFlags: 0
